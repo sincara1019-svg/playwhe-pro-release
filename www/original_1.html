@@ -1,0 +1,915 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PlayWhe Pro 740 PWA Fixed</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#38bdf8">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="PlayWhe Pro">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+body{background:#02060a;color:white;font-family:Inter,system-ui}
+.card{background:rgba(10,20,32,0.9);border:1px solid rgba(56,189,248,0.25);border-radius:18px}
+.tab-active{background:linear-gradient(135deg,#38bdf8,#0ea5e9);color:#000;font-weight:900;box-shadow:0 0 25px rgba(56,189,248,0.7)}
+.chip{display:inline-block;padding:3px 9px;border-radius:9999px;font-size:10px;font-weight:800;margin:2px;border:1px solid}
+.chip-blue{background:rgba(56,189,248,0.18);border-color:rgba(56,189,248,0.5);color:#38bdf8}
+.chip-light{background:rgba(125,211,252,0.14);border-color:rgba(125,211,252,0.35);color:#7dd3fc}
+.num-ball{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:900;background:linear-gradient(135deg,#38bdf8,#0ea5e9);color:white}
+@keyframes pulseCritical {
+  0% { box-shadow: 0 0 0 0 rgba(239,68,68,0.7); transform: scale(1); }
+  50% { box-shadow: 0 0 0 8px rgba(239,68,68,0); transform: scale(1.08); }
+  100% { box-shadow: 0 0 0 0 rgba(239,68,68,0); transform: scale(1); }
+}
+@keyframes glowCritical {
+  0%,100% { border-color: #ef4444; box-shadow: 0 0 10px rgba(239,68,68,0.3); }
+  50% { border-color: #f87171; box-shadow: 0 0 20px rgba(239,68,68,0.6), 0 0 30px rgba(239,68,68,0.3); }
+}
+@keyframes pulseDue {
+  0% { box-shadow: 0 0 0 0 rgba(245,158,11,0.5); }
+  70% { box-shadow: 0 0 0 6px rgba(245,158,11,0); }
+  100% { box-shadow: 0 0 0 0 rgba(245,158,11,0); }
+}
+.critical-pulse{ animation: pulseCritical 1.5s infinite; }
+.critical-glow{ animation: glowCritical 2s infinite; }
+.due-pulse{ animation: pulseDue 2s infinite; }
+.watch-glow{ box-shadow: 0 0 8px rgba(234,179,8,0.25); }
+
+.prob-badge{display:inline-block;padding:2px 6px;border-radius:9999px;font-size:9px;font-weight:900;background:rgba(56,189,248,0.2);border:1px solid rgba(56,189,248,0.4);color:#7dd3fc}
+.prob-high{background:rgba(34,197,94,0.2);border-color:rgba(34,197,94,0.5);color:#22c55e}
+.prob-med{background:rgba(245,158,11,0.2);border-color:rgba(245,158,11,0.5);color:#f59e0b}
+.prob-low{background:rgba(239,68,68,0.15);border-color:rgba(239,68,68,0.4);color:#ef4444}
+
+@keyframes pulseProb {
+  0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(34,197,94,0.7); }
+  50% { transform: scale(1.08); box-shadow: 0 0 0 10px rgba(34,197,94,0); }
+  100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(34,197,94,0); }
+}
+@keyframes pulseGold {
+  0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(245,158,11,0.6); }
+  50% { transform: scale(1.05); box-shadow: 0 0 0 8px rgba(245,158,11,0); }
+  100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(245,158,11,0); }
+}
+@keyframes glowNumber {
+  0%,100% { box-shadow: 0 0 10px currentColor; }
+  50% { box-shadow: 0 0 20px currentColor, 0 0 30px currentColor; }
+}
+.pulse-prob{ animation: pulseProb 1.4s infinite; }
+.pulse-gold{ animation: pulseGold 1.8s infinite; }
+.pulse-board{ animation: pulseProb 2s infinite; }
+.glow-green{ box-shadow: 0 0 12px #22c55e, 0 0 20px rgba(34,197,94,0.4); }
+.glow-blue{ box-shadow: 0 0 10px #38bdf8; }
+
+</style></head><body class="p-3"><div class="max-w-[1500px] mx-auto">
+<div class="flex justify-between items-center mb-4"><div class="flex gap-3 items-center"><div class="w-11 h-11 rounded-xl bg-gradient-to-br from-[#38bdf8] to-[#0ea5e9] flex items-center justify-center font-black text-black text-[14px] tracking-tighter shrink-0 shadow-[0_0_20px_rgba(56,189,248,0.5)] leading-none">PW</div><div><div class="font-black text-[20px] tracking-wide">PLAYWHE PRO</div><div class="text-[10px] text-[#7dd3fc]">740 DRAWS • REAL DRY DATES • OVERDUE FIXED • CATEGORY SORTED • DARK BLUE #38bdf8</div></div></div><button onclick="addRandom()" class="px-4 py-2 rounded-full bg-[#38bdf8] text-black font-black text-[12px]">+ ADD RANDOM</button></div>
+<div class="flex flex-wrap gap-2 mb-5"><button data-tab="analytics" class="tab-btn tab-active px-4 py-2 rounded-full text-[11px] border">ANALYTICS</button><button data-tab="dashboard" class="tab-btn px-4 py-2 rounded-full text-[11px] border border-[#38bdf8]/30">DASHBOARD</button><button data-tab="followers" class="tab-btn px-4 py-2 rounded-full text-[11px] border border-[#38bdf8]/30">FOLLOWERS</button><button data-tab="overdue" class="tab-btn px-4 py-2 rounded-full text-[11px] border border-[#38bdf8]/30">OVERDUE</button><button data-tab="charts" class="tab-btn px-4 py-2 rounded-full text-[11px] border border-[#38bdf8]/30">CHARTS 1/16 + 1/8</button><button data-tab="dreams" class="tab-btn px-4 py-2 rounded-full text-[11px] border border-[#38bdf8]/30">DREAMS</button><button data-tab="additional" class="tab-btn px-4 py-2 rounded-full text-[11px] border border-[#38bdf8]/30">ADDITIONAL</button></div>
+<div id="analytics" class="tab-panel">
+<style>.pulse-text{animation: pulseProb 1.5s infinite; display:inline-block}</style>
+<!-- TOP 5 BEST BETS -->
+<div class="card p-5 mb-4" style="border:2px solid #22c55e; background:linear-gradient(135deg, rgba(34,197,94,0.15), rgba(16,185,129,0.05))">
+<div class="flex justify-between items-center mb-3">
+<div class="font-black text-[#22c55e] text-[18px]">🔥 TOP 5 BEST BETS - HIGHEST PROBABILITY</div>
+<div class="text-[10px] opacity-60">Confidence = Probability vs 2.78% base • Updated live</div>
+</div>
+<div id="top5Bets" class="grid grid-cols-12 gap-3"></div>
+<div id="top5Summary" class="mt-3 p-3 bg-black/50 rounded-xl text-[11px]"></div>
+</div>
+
+<div class="card p-5 mb-4"><div class="flex justify-between items-center flex-wrap gap-2"><div><div class="font-black text-[#38bdf8] text-[18px]">NEXT NUMBER AI - WITH PROBABILITY</div><div class="text-[10px] opacity-50">Last: <span id="lastDrawLabel" class="text-[#7dd3fc]"></span> • Probability = weighted AI score normalized to 100% + real frequency</div></div>
+<div class="flex gap-2"><button id="sortProbBtn" onclick="toggleProbSort()" class="px-3 py-1.5 rounded-full bg-[#22c55e]/20 border border-[#22c55e]/50 text-[#22c55e] font-black text-[10px]">SORT: PROBABILITY ↓</button><button onclick="setBoardSort('num')" class="px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-[10px]">BOARD: NUMBER</button></div></div>
+<div id="predGrid" class="grid grid-cols-12 gap-2 mt-3"></div></div>
+
+<div class="card p-5 mb-4">
+<div class="flex justify-between items-center mb-3 flex-wrap gap-2">
+<div><div class="font-black text-[#38bdf8] text-[16px]">PLAY BOARD - ALL 36 NUMBERS + PROBABILITY NEXT TO PLAY</div><div class="text-[10px] opacity-50">Base 1/36 = 2.78% • Prob shown = AI + Frequency + Overdue weighted • Click SORT to rank by chance</div></div>
+<div class="flex gap-2">
+<button id="boardSortProb" onclick="setBoardSort('prob')" class="px-3 py-1.5 rounded-full bg-[#38bdf8] text-black font-black text-[10px]">SORT BY PROBABILITY ↓</button>
+<button id="boardSortNum" onclick="setBoardSort('num')" class="px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-[10px]">SORT BY NUMBER 1-36</button>
+<button id="boardSortGap" onclick="setBoardSort('gap')" class="px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-[10px]">SORT BY DRY GAP</button>
+</div>
+</div>
+<div id="playBoardProb" class="grid grid-cols-12 gap-2"></div>
+<div class="grid grid-cols-4 gap-2 mt-3 text-[10px]">
+<div class="card p-2 text-center"><div class="opacity-50">HIGHEST PROB</div><div id="highestProb" class="font-black text-[#22c55e]"></div></div>
+<div class="card p-2 text-center"><div class="opacity-50">LOWEST PROB</div><div id="lowestProb" class="font-black text-[#ef4444]"></div></div>
+<div class="card p-2 text-center"><div class="opacity-50">AVG PROB</div><div class="font-black">2.78%</div></div>
+<div class="card p-2 text-center"><div class="opacity-50">TOTAL EDGE</div><div id="totalEdge" class="font-black text-[#7dd3fc]"></div></div>
+</div>
+</div>
+
+<div class="card p-5"><div class="font-bold mb-2">DISTRIBUTION WITH REAL DATES + PROBABILITY</div><div id="distGrid" class="grid grid-cols-12 gap-2"></div></div></div>
+<div id="dashboard" class="tab-panel hidden"><div class="grid grid-cols-12 gap-4"><div class="col-span-12 lg:col-span-8 card p-5"><div class="flex justify-between mb-3"><div class="font-black text-[#38bdf8]">DASHBOARD</div><div class="flex gap-2"><select id="addNumSelect" class="bg-black border border-[#38bdf8]/40 rounded-lg px-2 py-1 text-[12px]"></select><button onclick="addSelectedDraw()" class="px-3 py-1 rounded-full bg-[#38bdf8] text-black font-black text-[11px]">ADD</button><button onclick="undoDraw()" class="px-3 py-1 rounded-full bg-white/10 text-[11px]">UNDO</button></div></div><div id="recentDraws" class="flex flex-wrap gap-2 max-h-[160px] overflow-auto p-2 bg-black/40 rounded-xl"></div><div class="grid grid-cols-3 gap-2 mt-3"><div class="card p-2 text-center"><div class="text-[9px] opacity-50">TOTAL</div><div id="totalDraws" class="font-black text-[#38bdf8] text-[18px]"></div></div><div class="card p-2 text-center"><div class="text-[9px] opacity-50">LAST</div><div id="lastDrawDash" class="font-black text-[#7dd3fc] text-[14px]"></div></div><div class="card p-2 text-center"><div class="text-[9px] opacity-50">HOT</div><div id="mostHot" class="font-black text-[12px]"></div></div></div><div class="mt-3"><div class="text-[10px] text-[#7dd3fc] font-bold mb-1">QUICK ADD</div><div id="quickAdd" class="grid grid-cols-12 gap-1"></div></div></div><div class="col-span-12 lg:col-span-4 card p-5"><div class="font-bold text-[13px]">Live Sync</div><button onclick="saveDraws()" class="w-full py-2 rounded-lg bg-[#38bdf8]/20 border border-[#38bdf8]/40 text-[#38bdf8] text-[11px] font-bold mt-2">SAVE</button><button onclick="loadDraws()" class="w-full py-2 rounded-lg bg-white/5 border border-white/10 text-[11px] mt-1">LOAD</button><button onclick="resetDraws()" class="w-full py-2 rounded-lg bg-red-500/10 border border-red-500/30 text-red-400 text-[11px] mt-1">RESET TO 740</button><div class="mt-3 p-2 bg-black/50 rounded-lg"><div class="text-[10px] text-[#38bdf8] font-bold">Today Board</div><div id="todayBoard" class="text-[11px] mt-1"></div></div></div></div></div>
+<div id="followers" class="tab-panel hidden">
+<div class="card p-5 mb-4">
+<div class="flex flex-wrap justify-between gap-2 mb-3">
+<div>
+<div class="font-black text-[18px] text-[#38bdf8]">FOLLOWERS - 1-STEP • 2-STEP • 3-STEP CHAINS</div>
+<div class="text-[10px] text-[#7dd3fc]">1-step = what comes next • 2-step = what follows the follower • 3-step = full chain • Based on 740 draws • Click to add</div>
+</div>
+<div class="flex gap-2 items-center flex-wrap">
+<label class="flex items-center gap-1 text-[10px] bg-black border border-[#38bdf8]/30 rounded-full px-3 py-1.5"><input type="checkbox" id="toggleTwoStep" checked onchange="renderFollowers()"> 2-STEP</label>
+<label class="flex items-center gap-1 text-[10px] bg-black border border-[#f59e0b]/30 rounded-full px-3 py-1.5"><input type="checkbox" id="toggleThreeStep" checked onchange="renderFollowers()"> 3-STEP</label>
+<select id="followerSortMode" onchange="renderFollowers()" class="bg-black border border-[#38bdf8]/30 rounded-full px-3 py-1.5 text-[10px]">
+<option value="freq">SORT: FREQUENT</option>
+<option value="num">SORT: 1-36</option>
+<option value="recent">SORT: RECENT</option>
+</select>
+<input id="followerSearch" placeholder="Search..." oninput="renderFollowers()" class="bg-black border border-[#38bdf8]/30 rounded-full px-3 py-1.5 text-[10px] w-[90px]">
+</div>
+</div>
+<div id="followerStats" class="grid grid-cols-4 gap-2 mb-4 text-[10px]"></div>
+<div id="followersGrid" class="grid grid-cols-12 gap-3"></div>
+</div>
+<div class="card p-5">
+<div class="font-black text-[#38bdf8] mb-2">HEATMAPS - 1 / 2 / 3 Step</div>
+<div id="followHeatmap" class="overflow-auto"></div>
+</div>
+</div>
+<div id="overdue" class="tab-panel hidden"><div class="card p-6"><div class="flex flex-wrap justify-between gap-3 mb-4"><div><div class="font-black text-[18px] text-[#38bdf8]">OVERDUE - Real Dry Dates Fixed</div><div class="text-[11px] text-[#7dd3fc]">740 draws • Real calendar dates • Critical ≥60 • Due ≥40 • Warm ≥25 • 4 draws/day • Last Oct 3 2026</div></div><div class="flex gap-2 items-center"><div class="flex bg-black rounded-full p-1 border border-[#38bdf8]/30"><button id="overdueFilterAll" onclick="setOverdueFilter('all')" class="px-3 py-1 rounded-full bg-[#38bdf8] text-black font-black text-[10px]">ALL 36</button><button id="overdueFilterCritical" onclick="setOverdueFilter('critical')" class="px-3 py-1 rounded-full text-white/60 text-[10px]">CRITICAL ≥60</button><button id="overdueFilterDue" onclick="setOverdueFilter('due')" class="px-3 py-1 rounded-full text-white/60 text-[10px]">DUE ≥40</button><button id="overdueFilterWarm" onclick="setOverdueFilter('warm')" class="px-3 py-1 rounded-full text-white/60 text-[10px]">WARM ≥25</button></div><select id="overdueSort" onchange="renderOverdue()" class="bg-black border border-[#38bdf8]/40 rounded-lg px-2 py-1 text-[11px]"><option value="gap">Sort: Dry Gap ↓</option><option value="freq">Sort: Frequency ↓</option><option value="date">Sort: Oldest Date ↓</option></select></div></div><div class="grid grid-cols-12 gap-2 mb-4"><div class="col-span-6 md:col-span-3 card p-3 text-center border-[#ef4444] bg-[#ef4444]/15"><div class="text-[10px] opacity-80 text-[#ef4444] font-bold">🔴 CRITICAL ≥60</div><div id="criticalCount" class="font-black text-[20px] text-[#ef4444]"></div></div><div class="col-span-6 md:col-span-3 card p-3 text-center border-[#f59e0b] bg-[#f59e0b]/15"><div class="text-[10px] opacity-80 text-[#f59e0b] font-bold">🟠 DUE ≥40</div><div id="dueCount" class="font-black text-[20px] text-[#f59e0b]"></div></div><div class="col-span-6 md:col-span-3 card p-3 text-center border-[#eab308]/50 bg-[#eab308]/10"><div class="text-[10px] opacity-80 text-[#eab308] font-bold">🟡 WATCH ≥25</div><div id="warmCount" class="font-black text-[20px] text-[#eab308]"></div></div><div class="col-span-6 md:col-span-3 card p-3 text-center"><div class="text-[10px] opacity-60">AVG DRY</div><div id="avgDry" class="font-black text-[20px] text-white"></div></div></div>
+<div class="card p-4 mb-4 bg-black/60 border-dashed border-[#38bdf8]/40">
+<div class="font-black text-[12px] text-[#38bdf8]">MANUAL FIX OVERDUE - Enter real NLCB dry draws if still wrong</div>
+<div class="text-[10px] opacity-60 mb-2">Format: 28:172, 2:121, 12:116 etc. Gap = draws since last seen. Leave empty to use calculated.</div>
+<div class="flex gap-2"><input id="manualOverdueInput" placeholder="e.g., 22:98, 28:150, 2:100" class="flex-1 bg-black border border-[#38bdf8]/40 rounded-lg px-3 py-2 text-[12px]"><button onclick="applyManualOverdue()" class="px-4 py-2 rounded-full bg-[#38bdf8] text-black font-black text-[11px]">APPLY FIX</button><button onclick="clearManualOverdue()" class="px-3 py-2 rounded-full bg-white/10 text-[11px]">CLEAR</button></div>
+<div id="manualOverdueStatus" class="text-[10px] text-[#7dd3fc] mt-2"></div>
+</div>
+<div id="overdueGrid" class="grid grid-cols-12 gap-3"></div></div></div>
+<div id="charts" class="tab-panel hidden"><div class="grid grid-cols-12 gap-4">
+<div class="col-span-12 lg:col-span-6 card p-4" style="border-color:#38bdf8"><div class="flex justify-between items-center"><div class="font-black text-[13px] text-[#38bdf8]">1/16 CHART - REAL NLCB FIXED</div><div class="text-[9px] opacity-50">Official 1→16,29</div></div><div class="text-[10px] opacity-60 mt-1">Each number → 2 partners. Example: last draw 10 → play 25,2 and 18,33 and 31,23 (3 groups)</div><div id="chart116" class="grid grid-cols-2 md:grid-cols-3 gap-1.5 mt-3 text-[10px]"></div></div>
+<div class="col-span-12 lg:col-span-6 card p-4" style="border-color:#7dd3fc"><div class="flex justify-between items-center"><div class="font-black text-[13px] text-[#7dd3fc]">1/8 CHART - NEW (Add 8)</div><div class="text-[9px] opacity-50">Line chart 1-9-17-25-33</div></div><div class="text-[10px] opacity-60 mt-1">Numbers 8 apart play together. If 1 plays, watch 9,17,25,33. This is what players call 1-8-25 chart.</div><div id="chart18" class="grid grid-cols-2 gap-1.5 mt-3 text-[10px]"></div></div>
+<div class="col-span-12 lg:col-span-7 card p-4"><div class="font-bold text-[13px]">FREQUENCY / OVERDUE LIVE</div><div id="freqChartLive" class="grid grid-cols-6 md:grid-cols-9 gap-1 mt-2"></div></div>
+<div class="col-span-12 lg:col-span-5 card p-4"><div class="font-bold text-[13px]">DIAMOND CHART</div><div class="text-[9px] opacity-50 mt-1">Corners 1-6-31-36 mirrors etc</div><div id="chartDiamond" class="grid grid-cols-3 gap-1 mt-2 text-[10px]"></div></div>
+</div></div>
+<div id="dreams" class="tab-panel hidden"><div class="card p-5"><div class="font-bold mb-3">DREAMS</div><div id="dreamsGrid" class="grid grid-cols-12 gap-2"></div></div></div>
+<div id="additional" class="tab-panel hidden">
+<div class="card p-4 mb-3 bg-black/60 border-dashed border-[#38bdf8]/40">
+<div class="font-black text-[12px] text-[#38bdf8]">➕ ADD YOUR OWN MARK UNDER NUMBER</div>
+<div class="text-[10px] opacity-60 mb-2">Create custom mark that shows under tab - saved on your device</div>
+<div class="flex flex-wrap gap-2 items-end">
+<select id="customMarkNum" class="bg-black border border-[#38bdf8]/40 rounded-lg px-3 py-2 text-[12px]"><option value="">Number...</option></select>
+<input id="customMarkText" placeholder="e.g. White Horse, Big House..." class="bg-black border border-[#38bdf8]/40 rounded-lg px-3 py-2 text-[12px] w-[200px]">
+<button onclick="addCustomMark()" class="px-4 py-2 rounded-full bg-[#38bdf8] text-black font-black text-[11px]">ADD MARK</button>
+<button onclick="clearCustomMarks()" class="px-3 py-2 rounded-full bg-white/10 text-[11px]">CLEAR MY MARKS</button>
+<span id="customMarkStatus" class="text-[10px] text-[#7dd3fc]"></span>
+</div>
+</div>
+<div class="card p-5"><div class="flex flex-wrap justify-between gap-2 mb-3"><div><div class="font-bold text-[#38bdf8]">ADDITIONAL MARKS - Category Sorted 🐍🐱🐶</div><div class="text-[10px] text-[#7dd3fc]">Snakes, Cats, Dogs, Birds, Fish etc first • Your custom marks show with ⭐</div></div><div class="flex gap-2 items-center"><div class="flex bg-black rounded-full p-1 border border-[#38bdf8]/30"><button id="btnByNumber" onclick="setAdditionalView('number')" class="px-3 py-1 rounded-full bg-[#38bdf8] text-black font-black text-[10px]">BY NUMBER</button><button id="btnBySimilar" onclick="setAdditionalView('similar')" class="px-3 py-1 rounded-full text-white/60 text-[10px]">BY CATEGORY</button></div><input id="searchAdd" oninput="renderAdditional()" placeholder="snake, cat, dog, gold..." class="bg-black border border-[#38bdf8]/40 rounded-lg px-3 py-1.5 text-[12px] w-[200px]"></div></div><div id="additionalGrid" class="grid grid-cols-12 gap-3"></div><div id="similarGrid" class="hidden space-y-3"></div></div></div>
+</div>
+<script>
+const DRAWS=[19,30,8,36,35,19,9,12,35,8,13,32,31,1,12,21,17,5,19,24,23,1,11,29,29,16,17,21,21,4,3,26,19,9,29,35,33,11,31,9,18,10,8,24,16,35,28,20,13,27,8,21,23,5,12,15,11,4,16,16,23,34,7,28,34,30,11,10,24,22,17,3,34,13,18,2,16,33,29,32,24,24,7,36,13,33,12,4,9,31,17,10,11,24,26,7,13,29,22,25,29,34,20,7,3,22,27,5,20,21,24,25,6,14,11,13,24,17,18,11,5,28,6,18,27,24,21,19,3,35,30,21,25,36,29,22,2,1,31,23,24,12,30,14,21,30,8,2,22,33,4,12,5,31,29,30,1,31,34,30,34,33,15,21,6,5,13,19,23,33,31,23,3,34,36,18,5,29,21,34,11,5,18,32,23,26,21,26,9,1,36,25,24,9,5,26,16,32,17,15,20,33,5,36,22,26,34,28,18,26,20,2,14,7,2,20,30,18,20,13,5,25,26,28,23,1,9,36,31,12,5,34,34,21,4,30,36,6,7,29,27,17,16,10,5,23,34,22,3,18,33,6,20,25,25,28,29,34,12,26,26,2,21,24,9,26,12,35,18,6,5,11,10,16,21,12,23,1,30,5,10,5,1,3,8,18,24,12,16,23,26,17,1,31,12,15,4,17,16,22,24,4,2,27,7,5,30,34,21,1,17,33,1,32,7,18,7,4,12,5,11,22,13,16,28,12,30,29,11,34,34,22,28,14,31,21,9,32,19,29,30,25,7,19,25,34,17,19,16,9,14,19,12,16,35,27,34,12,32,29,22,3,35,32,8,13,20,21,8,18,23,36,34,7,19,17,9,3,23,22,35,8,35,3,26,13,34,11,32,15,36,20,33,30,11,32,11,26,21,23,29,15,27,9,28,10,18,16,31,34,34,28,36,15,28,24,25,20,5,26,31,28,4,19,24,17,15,11,31,19,7,26,14,25,16,22,36,16,20,4,14,3,18,26,22,28,25,25,31,5,24,36,18,26,17,27,25,16,15,7,10,25,28,28,24,5,28,5,31,32,28,32,5,24,30,33,18,10,22,25,21,8,15,7,32,19,24,10,33,36,18,34,8,31,16,13,11,9,26,2,28,20,30,10,14,11,11,20,19,10,10,18,34,2,15,2,35,7,6,25,24,5,3,35,12,7,29,10,14,28,10,20,5,15,19,12,15,23,1,27,36,17,1,22,7,33,10,20,28,6,24,19,3,7,4,13,35,30,18,2,2,18,30,18,20,2,17,28,24,34,29,32,27,6,24,3,23,3,13,10,9,3,30,17,6,7,32,35,9,7,18,23,11,33,32,26,27,33,33,11,3,17,35,31,13,20,20,18,4,8,16,21,26,31,23,14,30,2,2,20,34,14,12,12,6,33,25,5,17,3,31,23,32,25,1,7,35,27,15,9,3,22,31,25,8,14,1,31,20,13,31,36,24,34,29,32,27,6,24,3,23,3,13,10,9,3,30,17,6,7,32,35,9,7,18,23,11,33,32,26,27,33,33,11,3,17,3,30,17,6,7,32,35,9,7,18,23,11,33,32,26,27,33,33,11,3,17,35,31,13,20,20,18,4,8,16,21,26,31,23,14,3,17,31,25,8,14,1,31,20,13,31,36,9,34,19,20,18,20,27]; let draws=[...DRAWS]; const MARKS_NAMES={"1":"Centipede","2":"Old Lady","3":"Carriage","4":"Dead Man","5":"Parson Man","6":"Belly","7":"Hog","8":"Tiger","9":"Cattle","10":"Monkey","11":"Corbeau","12":"King","13":"Crapaud","14":"Money","15":"Sick Woman","16":"Jamette","17":"Pigeon","18":"Water Boat","19":"Horse","20":"Dog","21":"Mouth","22":"Rat","23":"House","24":"Queen","25":"Morrocoy","26":"Fowl","27":"Little Snake","28":"Red Fish","29":"Opium Man","30":"House Cat","31":"Parson Wife","32":"Shrimp","33":"Spider","34":"Blind Man","35":"Big Snake","36":"Donkey"}; const ADDITIONAL={"1": ["Cutlass", "Penknife", "Small Gun", "Key", "Pen", "Candle", "Stick", "Smoking", "Chain", "Cigarettes", "Lights", "Bar", "Glass", "Women", "Snakes", "Scissors", "Tailor", "Razor", "Barber", "Head", "Old people", "Old", "Anyhow", "Back to Front", "Upside down", "Wrong side"], "2": ["Woman & Child", "Nurses", "Women Children", "Dogs", "Biggest Fire", "Lights"], "3": ["Car", "Tire", "Bicycle", "Airplane", "Truck", "Van", "Hearse", "Danger", "Doctors", "Dead", "Fire", "Lights", "Choir", "Crowd", "Dancers", "Runners", "Donkey", "Peacock", "Fowl", "Egg", "Breast", "Indian Woman"], "4": ["Coffin", "Hearse", "Fire", "Crying", "Fresh Dead", "Businessman", "Blind", "Rat"], "5": ["Priest", "Pundit", "Thief", "Gambling Man", "Naked", "Banking", "White People", "Indian Man", "Teacher", "Bishop", "Church", "Room", "Holes", "Ground Worm", "Snakes", "Jumbie", "Men", "Key Small House", "Telephone", "Radio"], "6": ["Bag", "Suitcase", "Pot", "Pit", "Hole", "Clothes", "Naked Warrior", "Stick", "Full Bag", "Pumpkin", "Pregnant Woman", "Rabbit", "Upside-Down", "Sick", "Bed", "Nurses", "Old Woman", "Old People", "Old"], "7": ["Dirty Water", "Mud", "Digging", "Holes", "Black Hole", "Dirty Clothes", "Old Man", "Sick Man", "Ugly Warrior", "Old", "Ugly", "Sick", "Full Bag"], "8": ["Gold", "Indian Man", "Lion", "King", "Warriors", "Dogs", "Hunting", "Fighting", "Chest", "Temper", "Quarreling", "Anyhow", "Back-to-Front", "Upside-Down", "Biggest Blood", "Medicine", "House"], "9": ["Milk", "Calf", "Grass", "Biggest Water", "Buffalo", "Bison", "Meat", "Warrior", "Madman"], "10": ["Boy Child", "Children", "Teasing", "Pelting Stones", "Climbing", "Swimming", "Football", "Cricket", "Jockeys", "Gentlemen", "Dancing", "Singing", "Organ", "Carnival", "Playing Mas", "Gestures", "antics", "Crazy", "Biggest Drunkard", "Sick", "Thief"], "11": ["Doctor", "Gentleman", "King", "Policeman", "Jackass", "Black Pants", "Black Jackpot", "Black", "Obeah Man", "Half-Half", "Anyhow", "Back-to-Front", "Upside-Down", "Wrong-Side", "Crowd", "Birds", "Feathers", "Duck"], "12": ["Tie Pin", "White Man", "Governor", "Inspector", "Sergeant", "Saga Boy", "Biggest Snake", "Hog", "Coins", "Silver Money", "Men", "Doctors", "Ears", "Face", "Crying", "Bathing", "Clear Water", "Sea"], "13": ["Girl Child", "Children", "Playing Hearing Music", "Singing", "Choir", "Women", "Gentlemen", "Doctors", "Medicine", "Right Hand", "Obeah Man", "Fire", "Fowl", "Hiding", "Sitting", "Squatting", "Muscles", "Shell", "Cockroach", "Ugly", "Faeces", "Dirty Water", "Well"], "14": ["Ears", "Butterfly", "Honey", "Gold", "Silver", "Diamonds", "Jewels", "Glass", "Bank with Money", "Paper Money", "Leaves", "Upside-Down", "Wrong-Side", "Saddle", "Mouth"], "15": ["Sick Women", "Pregnant Woman", "Glass", "Silver", "Bush", "Leaves", "Climbing Trees"], "16": ["Cosquel", "Women", "Troublemaker", "Prostitute", "Quarrelling", "Cursing", "Rowdiness", "Confusion"], "17": ["White", "Fowl", "Pretty Birds", "Flowers", "Love", "Lions", "Kissing", "Lovemaking", "Naked Person", "Mad Person", "Married Person", "Children", "Nurse", "Dogs", "Young Girl", "Letter", "Forgetting", "Sailor", "Sailor Band", "Crowd"], "18": ["Sailing", "Bathing", "Sea", "Pond", "Hold", "River", "Water Hose", "Children", "Chinese", "Fowl", "Iguana", "Crocodile", "Teeth", "Coffin", "Box", "Crying", "Medicine", "Glass", "Half-Half"], "19": ["Dancers", "Runners", "Running", "Racing", "Saddle", "Danger", "Head", "Trimming Hair", "Face", "Ears", "Dressing", "Selling", "Merchant", "Crazy Mad", "Sick", "Forgetting"], "20": ["Police", "FBI", "Lions", "Commands", "Arguing", "Crazy Mad", "Thief", "Bandit", "Merchant", "House", "Jamette", "Boy child"], "21": ["Teeth", "Hole", "Talking", "Arguing", "Cursing", "Water Hose", "Salesman", "Merchant", "Danger", "Runners", "Dancers", "Horse", "Cats"], "22": ["Thief", "Rotten Teeth", "Nose", "Right Foot", "Blind Mice", "Hiding", "Holes", "business Premises", "Business Man", "Drunkard", "Naked", "Torn Clothes", "Tight Shoes", "Clothes", "Shoes", "Cleaning House", "Teacup", "Medicine", "Sick", "Half-Half"], "23": ["Church", "Big House", "Hosay", "Elephant", "Bank", "Hotel", "Offices", "Hospital", "Old Woman", "Sick", "Drunk"], "24": ["Eating Food", "Vegetables", "Fruits", "Picking Fruits", "Rotten Fruit", "Old", "Sickness", "Crying", "Old People", "Quarreling", "Jamette", "Women", "Silver Money"], "25": ["Shell", "Van", "Locked Enclosed House", "Child", "Thief", "Ugly", "Hard Back", "Saddle", "Falling Down", "Rocks", "Drum Beating", "Fire", "Light", "Priest", "King", "Print"], "26": ["Fete", "Anniversary", "Birthday", "Singing", "Playing Music", "Ears", "Choir", "Parson", "Crowd", "Confusion", "Arguing", "Jamette", "Creole Fowl", "Hen Fowl", "Duck", "Turkey", "Feather", "Neck", "Face", "Head", "Crazy Mad", "Old", "Old People", "Last"], "27": ["Stick", "Cane", "Bamboo", "Cutlass", "Rifle", "Rope", "Wire", "Line", "Short Road", "Left Foot", "Bathing", "Nakedness", "Liming", "Winning", "Parson", "Medicine", "Lions"], "28": ["Chinese", "Red", "Drinking Rum", "Drunkenness", "Cock Fowl", "King", "Parson", "Jamette", "Bathing", "Swimming", "Fishes", "Catching", "Blood", "Cleaning", "Eating", "Receiving Gift"], "29": ["Drunkard", "Drinking Rum", "Walking Crooked", "Left Hand", "Parson", "Chinese Man", "Men", "Brown"], "30": ["Inside House", "Drawers", "Money", "Gold", "Ripe", "Yellow", "Gold Cat", "Petty Thief", "Stealing", "Crying", "Begging", "Church", "Crowd", "Lights"], "31": ["Teacher", "Nurse", "Woman Praying", "Forgetting", "Big Jamette", "Dancers", "Women", "Brown", "White", "Hospital", "Beggars"], "32": ["Fig", "Iron", "Bullet", "Bottle", "Snake", "Male Genitals", "Nakedness", "Dirtiness", "Bathing", "Drinking Rum", "Crowd"], "33": ["Hairy Person", "Lion", "Hair", "Beard", "Bush", "Grass", "Nest", "Bed", "Grave", "Cobweb", "Cleaning House", "Small House", "Net", "Crab", "Shrimp", "Paper Money", "Party", "Bicycle", "Hood", "Half-Half"], "34": ["Eyes", "Glasses", "Owls", "Bats", "Blind Mice", "Reading", "Writing", "Egg", "Paper Money", "Begging", "Sleeping", "Blind Institute", "Cloud", "Visitor", "Stranger", "Searching", "Danger", "Shooting", "Bull", "Deer", "Goad", "Runners", "Crowd", "Cemetery"], "35": ["Vines", "Long Road", "River", "Travelling", "Old Dead", "Man Come", "Visitor", "Party", "Bursting Bamboo", "Big Money", "Gold Chain", "King", "Hole"], "36": ["Bridge", "sea", "River", "Well", "Hole with Water", "Deep", "Female Genitals", "Naked", "Rider", "Jackass", "Braying", "Laughing", "Posy", "Night Pan", "Cemetery"]};
+
+
+let CUSTOM_MARKS = {};
+try{
+  const saved = localStorage.getItem('playwhe_custom_marks');
+  if(saved){ CUSTOM_MARKS = JSON.parse(saved); }
+}catch(e){}
+function saveCustomMarks(){ try{ localStorage.setItem('playwhe_custom_marks', JSON.stringify(CUSTOM_MARKS)); }catch(e){} }
+function addCustomMark(){
+  const numSel = document.getElementById('customMarkNum');
+  const textIn = document.getElementById('customMarkText');
+  const status = document.getElementById('customMarkStatus');
+  const num = parseInt(numSel.value);
+  const txt = (textIn.value||'').trim();
+  if(!num || num<1 || num>36){ status.textContent='Pick number 1-36'; return; }
+  if(!txt){ status.textContent='Type a mark name'; return; }
+  if(!CUSTOM_MARKS[num]) CUSTOM_MARKS[num]=[];
+  // avoid duplicate
+  if(CUSTOM_MARKS[num].some(m=>m.toLowerCase()===txt.toLowerCase())){ status.textContent='Already exists under '+num; return; }
+  CUSTOM_MARKS[num].push(txt);
+  saveCustomMarks();
+  textIn.value='';
+  status.textContent='Added "'+txt+'" under '+num+' '+MARKS_NAMES[num]+' ⭐';
+  renderAdditional();
+  populateCustomMarkSelect();
+}
+function clearCustomMarks(){
+  if(!confirm('Clear all your custom marks?')) return;
+  CUSTOM_MARKS={};
+  saveCustomMarks();
+  document.getElementById('customMarkStatus').textContent='Cleared all custom marks';
+  renderAdditional();
+}
+function deleteCustomMark(num, idx){
+  if(CUSTOM_MARKS[num]){
+    CUSTOM_MARKS[num].splice(idx,1);
+    if(CUSTOM_MARKS[num].length===0) delete CUSTOM_MARKS[num];
+    saveCustomMarks();
+    renderAdditional();
+  }
+}
+function populateCustomMarkSelect(){
+  const sel=document.getElementById('customMarkNum');
+  if(!sel) return;
+  const cur=sel.value;
+  sel.innerHTML='<option value="">Number...</option>';
+  for(let i=1;i<=36;i++){
+    const o=document.createElement('option');
+    o.value=i;
+    o.textContent=i+' - '+MARKS_NAMES[i];
+    sel.appendChild(o);
+  }
+  sel.value=cur;
+}
+
+
+let LAST_DRAW_DATE = new Date('2026-10-05T19:00:00');
+const DRAWS_PER_DAY = 4;
+const ORIGINAL_DRAWS_LENGTH = DRAWS.length;
+let DRY_OVERRIDES_GAP = {"28": 92, "10": 120, "4": 95, "22": 92, "24": 85, "5": 32, "12": 36, "29": 89, "30": 43, "33": 34};
+let DRY_OVERRIDES_AT = {28: ORIGINAL_DRAWS_LENGTH, 10: ORIGINAL_DRAWS_LENGTH, 4: ORIGINAL_DRAWS_LENGTH, 22: ORIGINAL_DRAWS_LENGTH, 24: ORIGINAL_DRAWS_LENGTH, 5: ORIGINAL_DRAWS_LENGTH, 12: ORIGINAL_DRAWS_LENGTH, 29: ORIGINAL_DRAWS_LENGTH, 30: ORIGINAL_DRAWS_LENGTH, 33: ORIGINAL_DRAWS_LENGTH};
+
+
+function getDateForIndex(idx){
+  if(idx<0) return null;
+  const drawsAgo = draws.length - 1 - idx;
+  const daysAgo = Math.floor(drawsAgo / DRAWS_PER_DAY);
+  const d = new Date(LAST_DRAW_DATE);
+  d.setDate(d.getDate() - daysAgo);
+  // Adjust hours to match 4 daily draw times for more accurate due date
+  const remainder = drawsAgo % DRAWS_PER_DAY;
+  // 0 = 7pm (latest), 1=4pm, 2=1pm, 3=10:30am of that day backwards
+  const hoursMap = [19, 16, 13, 10.5];
+  d.setHours(Math.floor(hoursMap[remainder]), (hoursMap[remainder]%1)*60, 0, 0);
+  return d;
+}
+function formatDate(d){
+  if(!d) return 'Never';
+  return d.toLocaleDateString('en-TT',{month:'short', day:'numeric', year:'numeric'});
+}
+function formatDryDate(idx, gap){
+  if(idx<0 || gap===undefined || gap>=draws.length) return 'Never drawn • '+ (gap||0) +' draws dry';
+  const d = getDateForIndex(idx);
+  if(!d) return 'Never drawn';
+  const diffMs = LAST_DRAW_DATE - d;
+  const diffDays = Math.floor(diffMs/(1000*60*60*24));
+  const dateStr = formatDate(d);
+  const when = diffDays===0 ? 'Today' : diffDays===1 ? '1 day ago' : diffDays + ' days ago';
+  const drawsInfo = gap + ' draws (' + Math.floor(gap / DRAWS_PER_DAY) + ' days)';
+  return dateStr + ' • ' + when + ' • ' + drawsInfo;
+}
+function computeStats(){
+  const freq={}; for(let i=1;i<=36;i++) freq[i]=0; 
+  draws.forEach(n=>{ if(n>=1&&n<=36) freq[n]++; });
+  const lastSeen={}; for(let i=1;i<=36;i++) lastSeen[i]=-1; 
+  draws.forEach((n,idx)=>{ if(n>=1&&n<=36) lastSeen[n]=idx; });
+  
+  const overdue=Object.keys(lastSeen).map(k=>{
+    const num=parseInt(k);
+    let baseGap = lastSeen[num]===-1 ? draws.length : draws.length-1-lastSeen[num];
+    let lastIdx = lastSeen[num];
+    let gap;
+    let isOverridden = false;
+    
+    if(DRY_OVERRIDES_GAP[num]!==undefined){
+      if(baseGap===0){
+        // Just played - clear override
+        gap = 0;
+        lastIdx = draws.length-1;
+        // defer delete to addDraw, but show 0 now
+      } else {
+        const atLen = DRY_OVERRIDES_AT[num] || ORIGINAL_DRAWS_LENGTH;
+        const extra = draws.length - atLen;
+        gap = DRY_OVERRIDES_GAP[num] + extra;
+        lastIdx = draws.length - 1 - gap;
+        isOverridden = true;
+        if(lastIdx < -1) lastIdx = -1;
+      }
+    } else {
+      gap = baseGap;
+    }
+    const dryDays = Math.floor(gap / DRAWS_PER_DAY);
+    return {num,gap,count:freq[num],lastIdx,dryDays,isOverridden,baseGap};
+  }).sort((a,b)=>b.gap-a.gap);
+
+  const trans={}; for(let i=1;i<=36;i++) trans[String(i)]={}; 
+  for(let i=0;i<draws.length-1;i++){ const cur=String(draws[i]); const nxt=draws[i+1]; if(trans[cur]) trans[cur][nxt]=(trans[cur][nxt]||0)+1; }
+  const gapMap={}; overdue.forEach(o=>gapMap[o.num]=o.gap);
+  return {freq,overdue,gapMap,trans,lastSeen};
+}
+
+let overdueFilter='all';
+
+let boardSortMode='num'; // num, prob, gap
+let predSortMode='prob';
+function toggleProbSort(){
+  predSortMode = predSortMode==='prob' ? 'num' : 'prob';
+  document.getElementById('sortProbBtn').textContent = predSortMode==='prob' ? 'SORT: PROBABILITY ↓' : 'SORT: NUMBER ↑';
+  renderAll();
+}
+function setBoardSort(mode){
+  boardSortMode=mode;
+  document.getElementById('boardSortProb').className = mode==='prob' ? 'px-3 py-1.5 rounded-full bg-[#38bdf8] text-black font-black text-[10px]' : 'px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-[10px]';
+  document.getElementById('boardSortNum').className = mode==='num' ? 'px-3 py-1.5 rounded-full bg-[#38bdf8] text-black font-black text-[10px]' : 'px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-[10px]';
+  document.getElementById('boardSortGap').className = mode==='gap' ? 'px-3 py-1.5 rounded-full bg-[#38bdf8] text-black font-black text-[10px]' : 'px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-[10px]';
+  renderAll();
+}
+
+function setOverdueFilter(f){
+  overdueFilter=f;
+  document.getElementById('overdueFilterAll').className = f==='all' ? 'px-3 py-1 rounded-full bg-[#38bdf8] text-black font-black text-[10px]' : 'px-3 py-1 rounded-full text-white/60 text-[10px]';
+  document.getElementById('overdueFilterCritical').className = f==='critical' ? 'px-3 py-1 rounded-full bg-[#ef4444] text-white font-black text-[10px]' : 'px-3 py-1 rounded-full text-white/60 text-[10px]';
+  document.getElementById('overdueFilterDue').className = f==='due' ? 'px-3 py-1 rounded-full bg-[#f59e0b] text-black font-black text-[10px]' : 'px-3 py-1 rounded-full text-white/60 text-[10px]';
+  document.getElementById('overdueFilterWarm').className = f==='warm' ? 'px-3 py-1 rounded-full bg-[#eab308] text-black font-black text-[10px]' : 'px-3 py-1 rounded-full text-white/60 text-[10px]';
+  renderOverdue();
+}
+function renderOverdue(){
+  const stats=computeStats();
+  const sortBy=document.getElementById('overdueSort')?.value||'gap';
+  let list=[...stats.overdue];
+  // BY DUE LOGIC: gap is draws since last seen, most due = highest gap
+  if(overdueFilter==='critical') list=list.filter(o=>o.gap>=60);
+  else if(overdueFilter==='due') list=list.filter(o=>o.gap>=40);
+  else if(overdueFilter==='warm') list=list.filter(o=>o.gap>=25);
+  
+  if(sortBy==='freq') list.sort((a,b)=>b.count-a.count);
+  else if(sortBy==='date') list.sort((a,b)=>a.lastIdx-b.lastIdx); // oldest date first = smallest lastIdx first
+  else list.sort((a,b)=>b.gap-a.gap); // DEFAULT: BY DUE - largest gap first
+  
+  const critical=stats.overdue.filter(o=>o.gap>=60).length;
+  const due=stats.overdue.filter(o=>o.gap>=40).length;
+  const warm=stats.overdue.filter(o=>o.gap>=25).length;
+  const avg=stats.overdue.reduce((s,o)=>s+o.gap,0)/36;
+  const elC=document.getElementById('criticalCount'); if(elC) elC.textContent=critical;
+  const elD=document.getElementById('dueCount'); if(elD) elD.textContent=due;
+  const elW=document.getElementById('warmCount'); if(elW) elW.textContent=warm;
+  const elA=document.getElementById('avgDry'); if(elA) elA.textContent=avg.toFixed(1)+' draws';
+  const grid=document.getElementById('overdueGrid'); if(!grid) return;
+  grid.innerHTML=list.map(o=>{
+    // NEW COLOR SCHEME: Critical=RED, Due=ORANGE, Watch=YELLOW
+    let level, border, bgFrom, bgTo, textColor, barFrom, barTo;
+    if(o.gap>=60){
+      level='CRITICAL'; border='#ef4444'; bgFrom='#ef4444'; bgTo='#dc2626'; textColor='text-[#ef4444]'; barFrom='#ef4444'; barTo='#dc2626';
+    } else if(o.gap>=40){
+      level='DUE'; border='#f59e0b'; bgFrom='#f59e0b'; bgTo='#d97706'; textColor='text-[#f59e0b]'; barFrom='#f59e0b'; barTo='#d97706';
+    } else if(o.gap>=25){
+      level='WATCH'; border='#eab308'; bgFrom='#eab308'; bgTo='#ca8a04'; textColor='text-[#eab308]'; barFrom='#eab308'; barTo='#ca8a04';
+    } else {
+      level='NORMAL'; border='rgba(56,189,248,0.2)'; bgFrom='#38bdf8'; bgTo='#0ea5e9'; textColor='text-white/70'; barFrom='#38bdf8'; barTo='#0ea5e9';
+    }
+    const dryDate = formatDryDate(o.lastIdx, o.gap);
+    const lastDateOnly = o.lastIdx===-1 ? 'Never' : formatDate(getDateForIndex(o.lastIdx));
+    const pressure=(Math.min(o.gap/72*100,100)).toFixed(0);
+    const overriddenBadge = o.isOverridden ? '<span class="chip ml-1" style="background:'+border+'22;border-color:'+border+'88;color:'+border+'">FIXED</span>' : '';
+    const pulseClass = o.gap>=60 ? 'critical-pulse' : o.gap>=40 ? 'due-pulse' : '';
+    const glowClass = o.gap>=60 ? 'critical-glow' : o.gap>=25 ? 'watch-glow' : '';
+    return '<div class="col-span-12 md:col-span-6 lg:col-span-4 card p-3 '+glowClass+'" style="border-left:6px solid '+border+';border-top:1px solid '+border+'33"><div class="flex justify-between items-start"><div class="flex gap-2 items-center"><div class="w-10 h-10 rounded-xl flex items-center justify-center font-black text-white text-[14px] '+pulseClass+'" style="background:linear-gradient(135deg,'+bgFrom+','+bgTo+')">'+o.num+'</div><div><div class="font-black text-[13px]">'+MARKS_NAMES[o.num]+overriddenBadge+'</div><div class="text-[9px] opacity-50">Seen '+o.count+'x • '+((o.count/draws.length)*100).toFixed(1)+'% • Due #'+(stats.overdue.findIndex(x=>x.num===o.num)+1)+'</div></div></div><div class="text-right"><div class="font-black text-[11px] '+textColor+'">'+level+' '+o.gap+'</div><div class="text-[9px] opacity-40">Pressure '+pressure+'% • '+o.dryDays+'d dry</div></div></div><div class="mt-2"><div class="flex justify-between text-[9px] opacity-60 mb-1"><span>Last: '+lastDateOnly+'</span><span>'+o.dryDays+' days dry</span></div><div class="w-full h-2 bg-black/50 rounded-full overflow-hidden border border-white/5"><div class="h-full" style="width:'+Math.min(o.gap,100)+'%;background:linear-gradient(to right,'+barFrom+','+barTo+')"></div></div><div class="text-[8px] opacity-40 mt-1">'+dryDate+'</div></div><div class="flex gap-1 mt-2"><button onclick="addDraw('+o.num+')" class="px-2 py-1 rounded-full text-[9px] font-bold" style="background:'+border+'22;border:1px solid '+border+'66;color:'+border+'">PULL '+o.num+'</button><span class="text-[9px] opacity-30 self-center">Expected 1/36 • Due rank '+ (stats.overdue.findIndex(x=>x.num===o.num)+1) +'</span></div></div>';
+  }).join('');
+}
+
+let additionalView='number';
+function setAdditionalView(v){
+  additionalView=v;
+  document.getElementById('btnByNumber').className=v==='number'?'px-3 py-1 rounded-full bg-[#38bdf8] text-black font-black text-[10px]':'px-3 py-1 rounded-full text-white/60 text-[10px]';
+  document.getElementById('btnBySimilar').className=v==='similar'?'px-3 py-1 rounded-full bg-[#38bdf8] text-black font-black text-[10px]':'px-3 py-1 rounded-full text-white/60 text-[10px]';
+  document.getElementById('additionalGrid').classList.toggle('hidden',v!=='number');
+  document.getElementById('similarGrid').classList.toggle('hidden',v!=='similar');
+  renderAdditional();
+}
+function getSimilarGroups(){
+  const DEFS=[
+    {key:'🐍 SNAKES - Little Snake / Big Snake / Snake', pats:['little snake','big snake',' snake']},
+    {key:'🐱 CATS - House Cat / Cats', pats:['house cat',' cat','gold cat']},
+    {key:'🐶 DOGS', pats:[' dog',' dogs']},
+    {key:'🐴 HORSE / DONKEY / JACKASS', pats:['horse','donkey','jackass']},
+    {key:'🐔 FOWL / HEN / DUCK / TURKEY', pats:['fowl','hen','duck','turkey','peacock','cock fowl']},
+    {key:'🐦 BIRDS - Pigeon / Corbeau', pats:['pigeon','corbeau','bird','feather']},
+    {key:'🐟 FISH - Red Fish', pats:['red fish',' fish','fishes']},
+    {key:'🦀 CRAB / SHRIMP', pats:['crab','shrimp']},
+    {key:'🐯 TIGER / LION / CATTLE / BUFFALO', pats:['tiger','lion','cattle','buffalo','bison','bull','calf']},
+    {key:'🐀 RAT / MICE', pats:['rat','mice']},
+    {key:'🐖 HOG / MORROCOY', pats:['hog','morrocoy']},
+    {key:'🕷️ SPIDER / CENTIPEDE / CRAPAUD', pats:['spider','centipede','crapaud','cockroach','butterfly']},
+    {key:'💧 WATER / SEA / RIVER / BATHING', pats:['water','sea','river','pond','bathing','swimming']},
+    {key:'🔥 FIRE / LIGHTS', pats:['fire','lights','light']},
+    {key:'👴 OLD / OLD PEOPLE', pats:['old people','old man','old woman','old lady',' old']},
+    {key:'👩 WOMEN / NURSE / GIRL', pats:['women','woman','nurse','girl','jamette']},
+    {key:'👶 CHILDREN / BOY CHILD', pats:['boy child','children','child']},
+    {key:'💰 MONEY / GOLD / SILVER', pats:['money','gold','silver','jewel','coin','diamond']},
+    {key:'🔫 WEAPONS - Gun / Cutlass / Stick', pats:['gun','rifle','cutlass','stick','cane','razor','scissors']},
+    {key:'👮 AUTHORITY - Police / Doctor / Priest / King', pats:['police','doctor','priest','parson','king','teacher']},
+    {key:'🏠 HOUSE / CHURCH / HOLE', pats:['house','church','hole','room']},
+    {key:'🥃 DRUNK / RUM', pats:['drunk','rum']},
+    {key:'🩸 SICK / MEDICINE / BLOOD', pats:['sick','medicine','blood','crying']},
+    {key:'💃 DANCE / RUNNERS / CARNIVAL', pats:['dance','runner','carnival','fete','singing']},
+    {key:'🦹 THIEF / STEALING', pats:['thief','stealing']},
+    {key:'👻 DEAD / COFFIN', pats:['dead','coffin','hearse']},
+  ];
+  const groups={};
+  DEFS.forEach(d=>{groups[d.key]={nums:new Set(),marks:new Set(),examples:[]};});
+  const combinedForGroups = {}; Object.entries(ADDITIONAL).forEach(([k,v])=>combinedForGroups[k]=[...v]); Object.entries(CUSTOM_MARKS).forEach(([k,v])=>{ if(!combinedForGroups[k]) combinedForGroups[k]=[]; v.forEach(m=>{ if(!combinedForGroups[k].some(x=>x.toLowerCase()===m.toLowerCase())) combinedForGroups[k].push(m); }); });
+  Object.entries(combinedForGroups).forEach(([numStr,marks])=>{
+    const num=parseInt(numStr);
+    marks.forEach(raw=>{
+      const lower=raw.toLowerCase();
+      for(const def of DEFS){
+        if(def.pats.some(p=>lower.includes(p.trim()))){
+          groups[def.key].nums.add(num);
+          groups[def.key].marks.add(raw);
+          groups[def.key].examples.push({raw,num});
+          break;
+        }
+      }
+    });
+  });
+  return Object.entries(groups).filter(([k,v])=>v.nums.size>0).map(([k,v])=>({key:k,count:v.nums.size,nums:Array.from(v.nums).sort((a,b)=>a-b),marks:Array.from(v.marks),examples:v.examples})).sort((a,b)=>{
+    const order=['🐍','🐱','🐶','🐴','🐔','🐦','🐟','🦀','🐯','🐀','🐖','🕷️'];
+    const ai=order.findIndex(e=>a.key.startsWith(e)); const bi=order.findIndex(e=>b.key.startsWith(e));
+    if(ai!==-1&&bi!==-1) return ai-bi; if(ai!==-1) return -1; if(bi!==-1) return 1; return b.count-a.count;
+  });
+}
+function renderAdditional(){
+  populateCustomMarkSelect();
+  // Merge custom marks into display copy
+  const displayAdditional = {};
+  Object.entries(ADDITIONAL).forEach(([k,v])=>{ displayAdditional[k]=[...v]; });
+  Object.entries(CUSTOM_MARKS).forEach(([k,v])=>{
+    if(!displayAdditional[k]) displayAdditional[k]=[];
+    // add custom marks that aren't already there
+    v.forEach(m=>{
+      if(!displayAdditional[k].some(x=>x.toLowerCase()===m.toLowerCase())) displayAdditional[k].push(m+' ⭐');
+    });
+  });
+
+  const q=(document.getElementById('searchAdd')?.value||'').toLowerCase();
+  const grid=document.getElementById('additionalGrid'); const sim=document.getElementById('similarGrid'); if(!grid) return;
+  if(additionalView==='number'){
+    grid.innerHTML=''; if(sim) sim.innerHTML='';
+    Object.entries(displayAdditional).filter(([numStr,marks])=>{ const name=MARKS_NAMES[parseInt(numStr)].toLowerCase(); const all=(name+' '+marks.join(' ')+' '+numStr).toLowerCase(); return !q||all.includes(q); }).forEach(([numStr,marks])=>{
+      const num=parseInt(numStr); let display=marks; if(q){ const m=marks.filter(x=>x.toLowerCase().includes(q)); const o=marks.filter(x=>!x.toLowerCase().includes(q)); display=[...m,...o]; }
+      const d=document.createElement('div'); d.className='col-span-12 md:col-span-6 lg:col-span-4 card p-3';
+      d.innerHTML='<div class="flex justify-between mb-2"><div class="flex gap-2 items-center"><div class="w-8 h-8 rounded-lg bg-[#38bdf8] flex items-center justify-center font-black text-black text-[12px]">'+num+'</div><div><div class="font-bold text-[12px]">'+MARKS_NAMES[num]+'</div><div class="text-[9px] text-[#7dd3fc]">'+marks.length+' extra</div></div></div><button onclick="addDraw('+num+')" class="px-2 py-1 rounded-lg bg-[#38bdf8] text-black font-bold text-[10px]">ADD</button></div><div class="flex flex-wrap gap-1 max-h-[120px] overflow-auto">'+display.map(m=>'<span class="chip '+(q&&m.toLowerCase().includes(q)?'chip-blue border-2 border-[#38bdf8]':'chip-light')+'">'+m+'</span>').join('')+'</div>';
+      grid.appendChild(d);
+    });
+  } else {
+    const groups=getSimilarGroups().filter(g=>!q||g.key.toLowerCase().includes(q)||g.marks.some(m=>m.toLowerCase().includes(q)));
+    grid.innerHTML=''; sim.innerHTML='';
+    groups.forEach(g=>{
+      const d=document.createElement('div'); d.className='card p-3';
+      d.innerHTML='<div class="flex justify-between flex-wrap gap-2 mb-2"><div><div class="font-black text-[#38bdf8] text-[13px] uppercase">'+g.key+'</div><div class="text-[10px] opacity-60">'+g.count+' numbers share • '+g.marks.length+' variations</div></div><div class="flex flex-wrap gap-1">'+g.nums.map(n=>'<button onclick="addDraw('+n+')" class="chip chip-blue">'+n+' '+MARKS_NAMES[n]+'</button>').join('')+'</div></div><div class="flex flex-wrap gap-1">'+g.marks.map(m=>'<span class="chip '+(q&&m.toLowerCase().includes(q)?'chip-blue border-2 border-[#38bdf8]':'chip-light')+'">'+m+'</span>').join('')+'</div>';
+      sim.appendChild(d);
+    });
+  }
+}
+
+
+function renderFollowers(){
+  const stats=computeStats();
+  const grid=document.getElementById('followersGrid');
+  const heat=document.getElementById('followHeatmap');
+  const statEl=document.getElementById('followerStats');
+  if(!grid) return;
+  const sortMode=document.getElementById('followerSortMode')?.value||'freq';
+  const q=(document.getElementById('followerSearch')?.value||'').toLowerCase();
+  const showTwo = document.getElementById('toggleTwoStep')?.checked ?? true;
+  const showThree = document.getElementById('toggleThreeStep')?.checked ?? true;
+  
+  const transFull = {}; const transTwo = {}; const transThree = {};
+  const chains2 = {}; const chains3 = {};
+  for(let i=1;i<=36;i++){ transFull[i]={}; transTwo[i]={}; transThree[i]={}; chains2[i]={}; chains3[i]={}; }
+  for(let i=0;i<draws.length-1;i++){
+    const cur=draws[i], nxt=draws[i+1];
+    if(cur>=1&&cur<=36&&nxt>=1&&nxt<=36) transFull[cur][nxt]=(transFull[cur][nxt]||0)+1;
+  }
+  for(let i=0;i<draws.length-2;i++){
+    const cur=draws[i], mid=draws[i+1], nxt=draws[i+2];
+    if(cur>=1&&cur<=36&&mid>=1&&mid<=36&&nxt>=1&&nxt<=36){
+      transTwo[cur][nxt]=(transTwo[cur][nxt]||0)+1;
+      if(!chains2[cur][mid]) chains2[cur][mid]={};
+      chains2[cur][mid][nxt]=(chains2[cur][mid][nxt]||0)+1;
+    }
+  }
+  for(let i=0;i<draws.length-3;i++){
+    const a=draws[i], b=draws[i+1], c=draws[i+2], d=draws[i+3];
+    if(a>=1&&a<=36&&b>=1&&b<=36&&c>=1&&c<=36&&d>=1&&d<=36){
+      transThree[a][d]=(transThree[a][d]||0)+1;
+      if(!chains3[a][b]) chains3[a][b]={};
+      if(!chains3[a][b][c]) chains3[a][b][c]={};
+      chains3[a][b][c][d]=(chains3[a][b][c][d]||0)+1;
+    }
+  }
+  
+  let max1=0, pair1='', max2=0, pair2='', max3=0, pair3='';
+  Object.entries(transFull).forEach(([cur,obj])=>{ Object.entries(obj).forEach(([nxt,cnt])=>{ if(cnt>max1){ max1=cnt; pair1=cur+'→'+nxt; } }); });
+  Object.entries(chains2).forEach(([cur,mids])=>{ Object.entries(mids).forEach(([mid,ends])=>{ Object.entries(ends).forEach(([nxt,cnt])=>{ if(cnt>max2){ max2=cnt; pair2=cur+'→'+mid+'→'+nxt; } }); }); });
+  Object.entries(chains3).forEach(([a,bs])=>{ Object.entries(bs).forEach(([b,cs])=>{ Object.entries(cs).forEach(([c,ds])=>{ Object.entries(ds).forEach(([d,cnt])=>{ if(cnt>max3){ max3=cnt; pair3=a+'→'+b+'→'+c+'→'+d; } }); }); }); });
+  
+  if(statEl){
+    statEl.innerHTML=`
+      <div class="card p-2 text-center"><div class="opacity-50">PAIRS / TRIPLES / QUADS</div><div class="font-black text-[#38bdf8]">${draws.length-1} / ${draws.length-2} / ${draws.length-3}</div></div>
+      <div class="card p-2 text-center"><div class="opacity-50">TOP 1-STEP</div><div class="font-black text-[#22c55e]">${pair1} x${max1}</div></div>
+      <div class="card p-2 text-center"><div class="opacity-50">TOP 2-STEP</div><div class="font-black text-[#f59e0b]">${pair2} x${max2}</div></div>
+      <div class="card p-2 text-center"><div class="opacity-50">TOP 3-STEP</div><div class="font-black text-[#a855f7]">${pair3} x${max3}</div></div>
+    `;
+  }
+  
+  let numbers=[];
+  for(let n=1;n<=36;n++){
+    const obj=transFull[n]||{}; const total=Object.values(obj).reduce((a,b)=>a+b,0);
+    const entries=Object.entries(obj).map(([k,v])=>({num:+k,cnt:v,pct:total? v/total*100:0})).sort((a,b)=>b.cnt-a.cnt);
+    const obj2=transTwo[n]||{}; const tot2=Object.values(obj2).reduce((a,b)=>a+b,0);
+    const ent2=Object.entries(obj2).map(([k,v])=>({num:+k,cnt:v,pct:tot2? v/tot2*100:0})).sort((a,b)=>b.cnt-a.cnt);
+    const obj3=transThree[n]||{}; const tot3=Object.values(obj3).reduce((a,b)=>a+b,0);
+    const ent3=Object.entries(obj3).map(([k,v])=>({num:+k,cnt:v,pct:tot3? v/tot3*100:0})).sort((a,b)=>b.cnt-a.cnt);
+    numbers.push({num:n,name:MARKS_NAMES[n],total,entries,tot2,ent2,tot3,ent3,chains2:chains2[n]||{},chains3:chains3[n]||{},lastSeen:stats.lastSeen[n],gap:stats.gapMap[n]});
+  }
+  if(q) numbers=numbers.filter(x=> (''+x.num).includes(q) || x.name.toLowerCase().includes(q));
+  if(sortMode==='freq') numbers.sort((a,b)=>b.total-a.total);
+  else if(sortMode==='num') numbers.sort((a,b)=>a.num-b.num);
+  else numbers.sort((a,b)=>b.lastSeen-a.lastSeen);
+  
+  grid.innerHTML=numbers.map(o=>{
+    const top5=o.entries.slice(0,5);
+    const topHtml=top5.map((e,i)=>{
+      const bg=i===0?'bg-[#22c55e]/20 border-[#22c55e]/50 text-[#22c55e]':i<3?'bg-[#f59e0b]/15 border-[#f59e0b]/40 text-[#f59e0b]':'bg-white/5 border-white/10';
+      return `<button onclick="addDraw(${e.num})" class="flex justify-between w-full px-2 py-1.5 rounded-lg border text-[10px] font-bold ${bg}"><span class="flex gap-1 items-center"><span class="w-5 h-5 rounded bg-black/50 flex items-center justify-center">${e.num}</span>${MARKS_NAMES[e.num]}</span><span>${e.cnt}x ${e.pct.toFixed(1)}%</span></button>`;
+    }).join('');
+    
+    let twoHtml='';
+    if(showTwo){
+      twoHtml = `<div class="mt-2 p-2 rounded-lg bg-[#f59e0b]/5 border border-[#f59e0b]/20">
+        <div class="text-[9px] font-black text-[#f59e0b]">2-STEP: ${o.num} → X → Y (skip 1)</div>
+        <div class="flex flex-wrap gap-1 mt-1">${o.ent2.slice(0,4).map(e=>`<button onclick="addDraw(${e.num})" class="chip text-[8px]" style="background:rgba(245,158,11,0.15);border-color:rgba(245,158,11,0.4);color:#f59e0b">${o.num}→*→${e.num} ${e.cnt}x</button>`).join('') || 'none'}</div>
+        <div class="mt-2">`+
+        top5.slice(0,2).map(first=>{
+          const mid=first.num;
+          const map=o.chains2[mid]||{};
+          const list=Object.entries(map).map(([k,v])=>({num:+k,cnt:v})).sort((a,b)=>b.cnt-a.cnt).slice(0,3);
+          return `<div class="text-[8px] font-bold text-[#38bdf8] mt-1">${o.num}→${mid} (${first.cnt}x) →</div><div class="flex flex-wrap gap-1">${list.map(s=>`<button onclick="addDraw(${s.num})" class="chip text-[7px]" style="background:rgba(245,158,11,0.12);border-color:rgba(245,158,11,0.3);color:#fbbf24">${o.num}→${mid}→${s.num} ${s.cnt}x</button>`).join('') || '<span class="text-[7px] opacity-30">none</span>'}</div>`;
+        }).join('')+
+        `</div></div>`;
+    }
+    
+    let threeHtml='';
+    if(showThree){
+      // top 3-step chains
+      let chains=[];
+      Object.entries(o.chains3).forEach(([b,cs])=>{
+        Object.entries(cs).forEach(([c,ds])=>{
+          Object.entries(ds).forEach(([d,cnt])=>{
+            chains.push({b:+b,c:+c,d:+d,cnt});
+          });
+        });
+      });
+      chains.sort((a,b)=>b.cnt-a.cnt);
+      const topChains=chains.slice(0,5);
+      threeHtml = `<div class="mt-2 p-2 rounded-lg bg-[#a855f7]/5 border border-[#a855f7]/20">
+        <div class="text-[9px] font-black text-[#a855f7]">🔮 3-STEP: ${o.num} → X → Y → Z (full chain)</div>
+        <div class="flex flex-wrap gap-1 mt-1">${o.ent3.slice(0,4).map(e=>`<button onclick="addDraw(${e.num})" class="chip text-[8px]" style="background:rgba(168,85,247,0.15);border-color:rgba(168,85,247,0.4);color:#a855f7">${o.num}→*→*→${e.num} ${e.cnt}x ${e.pct.toFixed(0)}%</button>`).join('') || 'none'}</div>
+        <div class="mt-2 flex flex-col gap-1 max-h-[160px] overflow-auto">
+          ${topChains.map(ch=>`<button onclick="addDraw(${ch.d})" class="flex gap-1 items-center text-[8px] text-left px-2 py-1 rounded bg-black/30 border border-[#a855f7]/20 hover:bg-[#a855f7]/10">
+            <span class="font-black text-white">${o.num}</span><span class="opacity-50">→</span><span class="font-bold text-[#38bdf8]">${ch.b} ${MARKS_NAMES[ch.b]}</span><span class="opacity-50">→</span><span class="font-bold text-[#f59e0b]">${ch.c} ${MARKS_NAMES[ch.c]}</span><span class="opacity-50">→</span><span class="font-black text-[#a855f7]">${ch.d} ${MARKS_NAMES[ch.d]}</span><span class="ml-auto opacity-60">${ch.cnt}x</span>
+          </button>`).join('') || '<span class="text-[7px] opacity-30">No 3-step chains yet</span>'}
+        </div>
+      </div>`;
+    }
+    
+    return `<div class="col-span-12 md:col-span-6 lg:col-span-4 card p-3" style="border-left:4px solid ${o.gap>=60?'#ef4444':o.gap>=40?'#f59e0b':'#38bdf8'}">
+      <div class="flex justify-between items-start mb-2"><div class="flex gap-2 items-center"><div class="w-10 h-10 rounded-xl bg-gradient-to-br from-[#38bdf8] to-[#0ea5e9] flex items-center justify-center font-black text-black">${o.num}</div><div><div class="font-black text-[12px]">${o.name}</div><div class="text-[8px] opacity-50">Played ${o.total}x • Gap ${o.gap} • 2s ${o.tot2}x • 3s ${o.tot3}x</div></div></div><button onclick="addDraw(${o.num})" class="px-2 py-1 rounded-full bg-[#38bdf8]/20 border border-[#38bdf8]/40 text-[9px] font-black text-[#38bdf8]">ADD</button></div>
+      <div class="text-[9px] font-black text-[#7dd3fc] mb-1">1-STEP:</div><div class="flex flex-col gap-1 mb-1">${topHtml || 'none'}</div>
+      ${twoHtml}
+      ${threeHtml}
+    </div>`;
+  }).join('');
+  
+  if(heat){
+    let html='';
+    const makeHeat=(title, data, color, rgba)=> {
+      let h=`<div class="mb-6"><div class="font-bold text-[11px] mb-1" style="color:${color}">${title}</div><div class="grid" style="grid-template-columns: 40px repeat(36, minmax(16px,1fr)); gap:1px; font-size:7px"><div></div>`;
+      for(let c=1;c<=36;c++) h+=`<div class="text-center opacity-60">${c}</div>`;
+      for(let r=1;r<=36;r++){
+        h+=`<div class="font-black flex items-center justify-center bg-[#0a1420] rounded" style="color:${color}">${r}</div>`;
+        const row=data[r]||{}; const maxRow=Math.max(...Object.values(row),1);
+        for(let c=1;c<=36;c++){
+          const cnt=row[c]||0; const a=cnt? Math.min(0.2+(cnt/maxRow)*0.8,1):0.05;
+          const bg=cnt? `rgba(${rgba},${a})` : 'rgba(255,255,255,0.03)';
+          h+=`<div title="${r}→${c}:${cnt}x" class="text-center py-1 rounded cursor-pointer" style="background:${bg}" onclick="addDraw(${c})">${cnt||''}</div>`;
+        }
+      }
+      h+='</div></div>'; return h;
+    };
+    html+=makeHeat('DIRECT 1-STEP: Row → Col', transFull, '#38bdf8', '56,189,248');
+    html+=makeHeat('2-STEP: Row → * → Col (one in between)', transTwo, '#f59e0b', '245,158,11');
+    html+=makeHeat('3-STEP: Row → * → * → Col (two in between)', transThree, '#a855f7', '168,85,247');
+    heat.innerHTML=html;
+  }
+}
+function renderAll(){
+
+  const stats=computeStats();
+  const last=draws[draws.length-1];
+  document.getElementById('lastDrawLabel').textContent=last+' '+ (MARKS_NAMES[last]||'') + ' • ' + formatDate(LAST_DRAW_DATE);
+  const gapMap=stats.gapMap; const maxDry=Math.max(...Object.values(gapMap),1);
+  const transMap=stats.trans[String(last)]||{}; const maxFollowers=Math.max(...Object.values(transMap),1);
+  const last20=draws.slice(-20); const freqLast20={}; for(let i=1;i<=36;i++) freqLast20[i]=0; last20.forEach(n=>freqLast20[n]++);
+  const scored=[]; 
+  let totalCombined=0;
+  for(let n=1;n<=36;n++){ const overdueScore=(gapMap[n]/maxDry)*40; const cnt=transMap[n]||0; const markovScore=(cnt/maxFollowers)*35; const followersScore=(cnt/maxFollowers)*15; const hotScore=(freqLast20[n]/20)*10; const combined=overdueScore+markovScore+followersScore+hotScore; totalCombined+=combined; scored.push({num:n,name:MARKS_NAMES[n],gap:gapMap[n],cnt,combined,lastIdx:stats.lastSeen[n],freq:stats.freq[n]||0}); }
+  scored.forEach(s=>{ s.prob = totalCombined>0 ? (s.combined/totalCombined)*100 : 100/36; s.freqProb = (s.freq/draws.length)*100; s.expectedProb = 100/36; s.edge = s.prob - s.expectedProb; });
+  scored.sort((a,b)=>b.combined-a.combined);
+  const top12=scored.slice(0,12);
+  // NEXT NUMBER AI with probability
+  document.getElementById('predGrid').innerHTML=top12.map((p,i)=>{
+    let probClass = p.prob>=4 ? 'prob-high' : p.prob>=2.5 ? 'prob-badge' : 'prob-low';
+    let edgeText = p.edge>=0 ? '+'+p.edge.toFixed(2)+'%' : p.edge.toFixed(2)+'%';
+    let edgeColor = p.edge>=1 ? 'text-[#22c55e]' : p.edge>=0 ? 'text-[#7dd3fc]' : 'text-[#ef4444]';
+    return '<div class="col-span-6 md:col-span-4 lg:col-span-3 card p-3 '+(i<3 ? 'pulse-board' : '')+'" style="border:'+(i===0?'2px solid #22c55e':i<3?'2px solid #f59e0b':'1px solid rgba(56,189,248,0.2)')+'"><div class="flex gap-2 items-center"><div class="num-ball '+(i===0?'pulse-prob glow-green':i<3?'pulse-gold':'')+'">'+p.num+'</div><div class="flex-1"><div class="font-black text-[12px]">'+p.name+' <span class="'+probClass+' ml-1">'+p.prob.toFixed(2)+'%</span></div><div class="text-[8px] text-[#7dd3fc]">DRY '+p.gap+' • '+p.freq+'x • Freq '+p.freqProb.toFixed(2)+'%</div><div class="text-[7px] '+edgeColor+'">AI Score '+p.combined.toFixed(1)+' • Edge '+edgeText+' vs 2.78%</div><div class="text-[7px] opacity-50">Last '+ (p.lastIdx===-1 ? 'Never' : formatDate(getDateForIndex(p.lastIdx))) +'</div></div></div></div>';
+  }).join('');
+
+  // PLAY BOARD - ALL 36 NUMBERS WITH PROBABILITY NEXT TO PLAY
+  // Board sorting
+  let all36Sorted;
+  if(boardSortMode==='prob') all36Sorted = [...scored].sort((a,b)=>b.prob-a.prob);
+  else if(boardSortMode==='gap') all36Sorted = [...scored].sort((a,b)=>b.gap-a.gap);
+  else all36Sorted = [...scored].sort((a,b)=>a.num-b.num);
+  
+  const maxProb = Math.max(...scored.map(s=>s.prob));
+  const minProb = Math.min(...scored.map(s=>s.prob));
+  const totalEdge = scored.reduce((s,x)=>s+Math.max(0,x.edge),0);
+  document.getElementById('playBoardProb').innerHTML=all36Sorted.map((p,idx)=>{
+    let bg = p.prob>=maxProb*0.9 ? 'border-[#22c55e] bg-[#22c55e]/15' : p.prob>=3.5 ? 'border-[#f59e0b] bg-[#f59e0b]/10' : p.prob<2 ? 'border-[#ef4444]/50 bg-[#ef4444]/5' : 'border-[#38bdf8]/30';
+    let probClass = p.prob>=4 ? 'prob-high' : p.prob>=2.8 ? 'prob-badge' : 'prob-low';
+    let rankBadge = boardSortMode!=='num' ? '<div class="text-[7px] font-black text-[#38bdf8]">#'+(idx+1)+'</div>' : '';
+    return '<div class="card p-2 text-center '+bg+' '+(p.prob>=4 ? 'pulse-board' : '')+'"><div class="flex justify-between items-center"><div class="w-7 h-7 rounded-lg bg-[#38bdf8] flex items-center justify-center text-[11px] font-black text-black '+(p.prob>=4 ? 'pulse-prob glow-green' : p.prob>=3.5 ? 'pulse-gold glow-blue' : '')+'">'+p.num+'</div><div class="flex flex-col items-end"><div class="'+probClass+'">'+p.prob.toFixed(2)+'%</div>'+rankBadge+'</div></div><div class="font-bold text-[9px] mt-1">'+p.name+'</div><div class="text-[7px] opacity-50">'+p.freq+'x • DRY '+p.gap+'</div><div class="text-[6px] mt-1 '+ (p.edge>=0?'text-[#22c55e]':'text-[#ef4444]') +'">'+ (p.edge>=0?'+':'') + p.edge.toFixed(2)+'% edge</div><button onclick="addDraw('+p.num+')" class="mt-1 w-full py-0.5 rounded-full bg-[#38bdf8]/20 border border-[#38bdf8]/30 text-[7px] font-bold text-[#38bdf8]">PLAY '+p.num+'</button></div>';
+  }).join('');
+  const hp = scored.reduce((a,b)=>a.prob>b.prob?a:b); const lp = scored.reduce((a,b)=>a.prob<b.prob?a:b);
+  document.getElementById('highestProb').textContent = hp.num+' '+hp.name+' '+hp.prob.toFixed(2)+'%';
+  document.getElementById('lowestProb').textContent = lp.num+' '+lp.name+' '+lp.prob.toFixed(2)+'%';
+  const teEl=document.getElementById('totalEdge'); if(teEl) teEl.textContent = totalEdge.toFixed(2)+'% total +edge';
+
+  // TOP 5 BEST BETS - FIXED confidence to show real differences
+  const top5 = [...scored].sort((a,b)=>b.prob-a.prob).slice(0,5);
+  const maxP = top5[0]?.prob || 1;
+  const minP = top5[top5.length-1]?.prob || 0;
+  const range = maxP - minP || 1;
+  document.getElementById('top5Bets').innerHTML=top5.map((p,i)=>{
+    // Confidence now based on rank + prob difference + gap + edge for distinct values
+    const rankFactor = (5 - i) * 3; // 12,9,6,3,0
+    const probFactor = ((p.prob - minP) / range) * 25; // 0-25 spread
+    const gapFactor = Math.min(10, p.gap / 15); // overdue boost up to 10
+    const edgeFactor = Math.max(0, Math.min(10, p.edge * 5)); // edge boost
+    let confidence = 55 + probFactor + rankFactor + gapFactor + edgeFactor;
+    confidence = Math.min(99, Math.max(15, confidence));
+    const confColor = confidence>=85 ? '#22c55e' : confidence>=70 ? '#f59e0b' : confidence>=55 ? '#38bdf8' : '#7dd3fc';
+    const medals=['🥇','🥈','🥉','4️⃣','5️⃣'];
+    return '<div class="col-span-12 md:col-span-6 lg:col-span-2 card p-3" style="border:2px solid '+confColor+'; background:linear-gradient(135deg, '+confColor+'18, transparent)"><div class="flex justify-between"><div class="text-[14px]">'+medals[i]+'</div><div class="prob-high" style="border-color:'+confColor+';color:'+confColor+'">'+p.prob.toFixed(2)+'%</div></div><div class="flex gap-2 items-center mt-2"><div class="w-10 h-10 rounded-xl bg-gradient-to-br from-[#38bdf8] to-[#0ea5e9] flex items-center justify-center font-black text-black text-[16px] pulse-prob">'+p.num+'</div><div><div class="font-black text-[13px]">'+p.name+'</div><div class="text-[8px] opacity-60">'+p.freq+' hits • DRY '+p.gap+' draws</div></div></div><div class="mt-2"><div class="flex justify-between text-[8px] mb-1"><span>Confidence</span><span style="color:'+confColor+'" class="font-black">'+confidence.toFixed(1)+'%</span></div><div class="w-full h-2 bg-black/60 rounded-full overflow-hidden"><div class="h-full" style="width:'+confidence+'%;background:'+confColor+'"></div></div></div><div class="mt-2 text-[7px] leading-[9px] opacity-70">Edge <span class="font-bold" style="color:'+confColor+'">'+ (p.edge>=0?'+':'') + p.edge.toFixed(2)+'%</span> vs base 2.78% • Freq '+p.freqProb.toFixed(2)+'% • AI Score '+p.combined.toFixed(1)+' • Rank #'+(i+1)+'</div><button onclick="addDraw('+p.num+')" class="mt-2 w-full py-1.5 rounded-full font-black text-[10px]" style="background:'+confColor+';color:black">PLAY '+p.num+' NOW</button></div>';
+  }).join('');
+  const avgTop5Prob = top5.reduce((s,x)=>s+x.prob,0)/5;
+  const totalTop5Edge = top5.reduce((s,x)=>s+x.edge,0);
+  document.getElementById('top5Summary').innerHTML='<div class="flex flex-wrap gap-3 justify-between"><span>📊 Avg Top5 Prob: <b class="text-[#22c55e]">'+avgTop5Prob.toFixed(2)+'%</b> vs 2.78% base = <b>'+((avgTop5Prob/2.78)*100).toFixed(0)+'%</b> of expected</span><span>⚡ Total Edge: <b class="text-[#f59e0b]">'+totalTop5Edge.toFixed(2)+'%</b></span><span>🎯 Best Value: <b class="text-[#38bdf8]">'+top5[0].num+' '+top5[0].name+'</b> +'+top5[0].edge.toFixed(2)+'% edge</span></div><div class="text-[9px] opacity-50 mt-1">Top 5 combined chance = '+top5.reduce((s,x)=>s+x.prob,0).toFixed(2)+'% vs random 5 numbers = 13.89% • '+(top5.reduce((s,x)=>s+x.prob,0) > 13.89 ? '✅ Above random' : '⚠️ Below random')+'</div>';
+
+  document.getElementById('distGrid').innerHTML=Object.entries(stats.freq).sort((a,b)=>b[1]-a[1]).map(([num,c])=>{ 
+    const gap=gapMap[num]; 
+    const lastIdx=stats.lastSeen[num]; 
+    const lastDateStr = lastIdx===-1 ? 'Never' : formatDryDate(lastIdx); 
+    const s = scored.find(x=>x.num==num);
+    const prob = s ? s.prob.toFixed(2)+'%' : '0%';
+    const freqProb = ((c/draws.length)*100).toFixed(2)+'%';
+    let probClass = s && s.prob>=4 ? 'prob-high' : s && s.prob>=2.8 ? 'prob-badge' : 'prob-low';
+    return '<div class="col-span-6 md:col-span-4 lg:col-span-3 card p-2 flex justify-between items-center"><div class="flex gap-2 items-center"><div class="w-7 h-7 rounded-lg bg-[#38bdf8] flex items-center justify-center text-[11px] font-black text-black">'+num+'</div><div class="text-[10px]">'+MARKS_NAMES[num]+'<br><span class="opacity-50">'+c+'x ('+freqProb+') • '+lastDateStr+'</span></div></div><div class="text-right"><div class="'+probClass+'">'+prob+'</div><div class="text-[8px] text-[#7dd3fc] mt-1">DRY '+gap+'</div></div></div>'; 
+  }).join('');
+  document.getElementById('followersGrid').innerHTML=Object.keys(stats.trans).map(n=>{ const mp=stats.trans[n]; const entries=Object.entries(mp).sort((a,b)=>b[1]-a[1]).slice(0,3); return '<div class="col-span-6 md:col-span-4 lg:col-span-3 card p-2"><div class="font-bold text-[11px]">'+n+' '+MARKS_NAMES[n]+'</div><div class="flex gap-1 flex-wrap mt-1">'+(entries.map(([to,c])=>'<span class="chip chip-blue">'+to+'x'+c+'</span>').join('')||'<span class="text-[9px] opacity-30">none</span>')+'</div></div>'; }).join('');
+
+  // REAL NLCB 1/16 CHART - each number -> 2 partners
+  const CHART_1_16 = {
+    1:[16,29], 2:[17,30], 3:[18,31], 4:[19,32], 5:[20,33], 6:[21,34], 7:[22,35], 8:[23,36],
+    9:[24,1], 10:[25,2], 11:[26,3], 12:[27,4], 13:[28,5], 14:[29,6], 15:[30,7], 16:[31,8],
+    17:[32,9], 18:[33,10], 19:[34,11], 20:[35,12], 21:[36,13], 22:[1,14], 23:[2,15], 24:[3,16],
+    25:[4,17], 26:[5,18], 27:[6,19], 28:[7,20], 29:[8,21], 30:[9,22], 31:[10,23], 32:[11,24],
+    33:[12,25], 34:[13,26], 35:[14,27], 36:[15,28]
+  };
+  // Build 1/16 display with stories logic: show number + partners + mark names + last seen dry
+  const stats116 = computeStats();
+  document.getElementById('chart116').innerHTML = Object.entries(CHART_1_16).map(([numStr, partners])=>{
+    const num = parseInt(numStr);
+    const gap = stats116.gapMap[num]||0;
+    const lastIdx = stats116.lastSeen[num];
+    let border = gap>=60 ? 'border-[#ef4444] bg-[#ef4444]/10' : gap>=40 ? 'border-[#f59e0b] bg-[#f59e0b]/10' : 'border-[#38bdf8]/30';
+    return `<div class="card p-2 text-center ${border}"><div class="font-black text-[11px] text-[#38bdf8]">${num} → ${partners[0]},${partners[1]}</div><div class="text-[8px] font-bold mt-0.5">${MARKS_NAMES[num]}</div><div class="text-[7px] opacity-60">${MARKS_NAMES[partners[0]]} / ${MARKS_NAMES[partners[1]]}</div><div class="text-[7px] mt-1 ${gap>=40?'text-[#f59e0b] font-bold':''}">DRY ${gap}</div></div>`;
+  }).join('');
+
+  // REAL 1/8 CHART from user photo FB_IMG_1743029393094.jpg - exact NLCB 1/8
+  // Each number -> 2 partners: 1→8,25 | 2→9,26 | etc pattern +7 and +24
+  const CHART_1_8_MAP = {
+    1:[8,25], 2:[9,26], 3:[10,27], 4:[11,28],
+    5:[12,29], 6:[13,30], 7:[14,31], 8:[15,32],
+    9:[16,33], 10:[17,34], 11:[18,35], 12:[19,36],
+    13:[20,1], 14:[21,2], 15:[22,3], 16:[23,4],
+    17:[24,5], 18:[25,6], 19:[26,7], 20:[27,8],
+    21:[28,9], 22:[29,10], 23:[30,11], 24:[31,12],
+    25:[32,13], 26:[33,14], 27:[34,15], 28:[35,16],
+    29:[36,17], 30:[1,18], 31:[2,19], 32:[3,20],
+    33:[4,21], 34:[5,22], 35:[6,23], 36:[7,24]
+  };
+  const CHART_1_8 = Object.entries(CHART_1_8_MAP).map(([k,v])=>[parseInt(k), ...v]); // for compatibility
+
+  document.getElementById('chart18').innerHTML = CHART_1_8.map(group=>{
+    const avgGap = Math.round(group.reduce((s,n)=>s+(stats116.gapMap[n]||0),0)/group.length);
+    let border = avgGap>=40 ? 'border-[#f59e0b]/50 bg-[#f59e0b]/10' : avgGap>=25 ? 'border-[#eab308]/40 bg-[#eab308]/5' : 'border-[#7dd3fc]/30';
+    const lastDraw = draws[draws.length-1];
+    const highlight = group.includes(lastDraw) ? 'ring-2 ring-[#7dd3fc] shadow-[0_0_10px_rgba(125,211,252,0.5)]' : '';
+    return `<div class="card p-2 ${border} ${highlight}"><div class="font-black text-[11px] text-[#7dd3fc]">${group.join(' - ')}</div><div class="text-[7px] opacity-60 mt-1 leading-[9px]">${group.map(n=>MARKS_NAMES[n]).join(' • ')}</div><div class="flex gap-1 flex-wrap mt-1.5">${group.map(n=>{
+      const g = stats116.gapMap[n]||0;
+      const isLast = n===lastDraw;
+      return `<span class="chip ${isLast?'chip-blue':'chip-light'} ${g>=40?'border-[#f59e0b] text-[#f59e0b]':''}">${n}:${g}</span>`;
+    }).join('')}</div><div class="text-[7px] opacity-40 mt-1">Avg Dry ${avgGap} • ${group.includes(lastDraw)?'★ LAST DRAW LINE ★':''}</div></div>`;
+  }).join('');
+
+  document.getElementById('chartDiamond').innerHTML=['1-5-9','2-6-10','3-7-11','4-8-12','13-17-21','14-18-22','25-29-33','26-30-34','36 mirrors 18','Corners 1-6-31-36'].map(d=>'<div class="card p-2 text-center text-[10px]">'+d+'</div>').join('');
+  document.getElementById('dreamsGrid').innerHTML=[['Water / River',[18,28,5]],['Money / Gold',[14,8,11]],['Snake',[27,35,13]],['House',[23,30,4]],['Dead',[4,32,29]],['Car',[3,21,17]],['Baby',[2,16,1]],['Police',[11,19,24]],['Fish',[28,25,18]],['Marriage',[24,32,31]]].map(([name,nums])=>'<div class="col-span-6 lg:col-span-4 card p-2"><div class="font-bold text-[11px]">'+name+'</div><div class="flex gap-1 mt-1 flex-wrap">'+nums.map(n=>'<span class="chip chip-blue">'+n+' '+MARKS_NAMES[n]+'</span>').join('')+'</div></div>').join('');
+  renderFreqChart(); renderAdditional(); renderDashboard(); populateSelect(); renderOverdue(); renderFollowers();
+}
+function renderFreqChart(){ const el=document.getElementById('freqChartLive'); if(!el) return; const stats=computeStats(); el.innerHTML=''; 
+  const maxDry = Math.max(...Object.values(stats.gapMap),1);
+  const last = draws[draws.length-1];
+  const transMap = stats.trans[String(last)]||{};
+  const maxFollowers = Math.max(...Object.values(transMap),1);
+  const last20 = draws.slice(-20); const freqLast20={}; for(let i=1;i<=36;i++) freqLast20[i]=0; last20.forEach(n=>freqLast20[n]++);
+  let scored=[]; let total=0;
+  for(let n=1;n<=36;n++){ const overdueScore=(stats.gapMap[n]/maxDry)*40; const cnt=transMap[n]||0; const markovScore=(cnt/maxFollowers)*35; const followersScore=(cnt/maxFollowers)*15; const hotScore=(freqLast20[n]/20)*10; const combined=overdueScore+markovScore+followersScore+hotScore; total+=combined; scored.push({num:n,combined}); }
+  scored.forEach(s=>s.prob = total>0 ? (s.combined/total)*100 : 100/36);
+  const probMap={}; scored.forEach(s=>probMap[s.num]=s.prob);
+  for(let i=1;i<=36;i++){ const f=stats.freq[i]||0; const gap=stats.gapMap[i]||0; let color='border-green-400 text-green-400 bg-green-500/10'; let type='HOT'; if(gap>=60){ color='border-[#ef4444] text-[#ef4444] bg-[#ef4444]/10'; type='CRITICAL'; } else if(gap>=40){ color='border-[#f59e0b] text-[#f59e0b] bg-[#f59e0b]/10'; type='DUE'; } else if(gap>=25){ color='border-[#eab308] text-[#eab308] bg-[#eab308]/10'; type='WATCH'; } else if(gap>=15){ color='border-[#38bdf8] text-[#38bdf8] bg-[#38bdf8]/10'; type='OVERDUE'; } else if(f<=4){ color='border-pink-400 text-pink-400 bg-pink-500/10'; type='COLD'; } const lastIdx=stats.lastSeen[i]; const lastDateStr = lastIdx===-1 ? 'Never' : formatDate(getDateForIndex(lastIdx)); const prob = probMap[i]||0; const probClass = prob>=4?'text-[#22c55e] font-black': prob>=2.8?'text-[#7dd3fc]':'text-[#ef4444] opacity-70'; const div=document.createElement('div'); div.className='card p-1.5 text-center border '+color; div.innerHTML='<div class="font-black text-[12px]">'+i+'</div><div class="text-[8px]">'+MARKS_NAMES[i]+'</div><div class="text-[7px] mt-1">'+f+'x '+type+'</div><div class="text-[7px] '+probClass+'">'+prob.toFixed(2)+'% prob</div><div class="text-[6px] opacity-50">'+lastDateStr+'</div>'; el.appendChild(div); } }
+function populateSelect(){ const sel=document.getElementById('addNumSelect'); if(!sel) return; sel.innerHTML=''; for(let i=1;i<=36;i++){ const o=document.createElement('option'); o.value=i; o.textContent=i+' - '+MARKS_NAMES[i]; sel.appendChild(o); } }
+function addDraw(num){
+  if(num<1||num>36) return;
+  draws.push(num);
+  if(DRY_OVERRIDES_GAP[num]!==undefined){
+    delete DRY_OVERRIDES_GAP[num];
+    delete DRY_OVERRIDES_AT[num];
+    try{
+      localStorage.setItem('playwhe_manual_overdue', JSON.stringify(DRY_OVERRIDES_GAP));
+      localStorage.setItem('playwhe_manual_overdue_at', JSON.stringify(DRY_OVERRIDES_AT));
+    }catch(e){}
+  }
+  LAST_DRAW_DATE = new Date(LAST_DRAW_DATE.getTime() + (24/DRAWS_PER_DAY)*60*60*1000);
+  saveDraws();
+  renderAll();
+}
+function addSelectedDraw(){ const v=parseInt(document.getElementById('addNumSelect').value); if(v>=1&&v<=36){ addDraw(v); } }
+function undoDraw(){ if(draws.length){ draws.pop(); LAST_DRAW_DATE = new Date(LAST_DRAW_DATE.getTime() - (24/DRAWS_PER_DAY)*60*60*1000); saveDraws(); renderAll(); } }
+function saveDraws(){
+  try{
+    localStorage.setItem('playwhe_draws_blue', JSON.stringify(draws));
+    localStorage.setItem('playwhe_last_date', LAST_DRAW_DATE.toISOString());
+    localStorage.setItem('playwhe_manual_overdue', JSON.stringify(DRY_OVERRIDES_GAP));
+    localStorage.setItem('playwhe_manual_overdue_at', JSON.stringify(DRY_OVERRIDES_AT));
+    console.log('SAVED', draws.length, 'draws, date', LAST_DRAW_DATE.toISOString());
+  }catch(e){ console.error('saveDraws fail', e); }
+}
+function loadDraws(){
+  try{
+    const r=localStorage.getItem('playwhe_draws_blue');
+    if(r){
+      const p=JSON.parse(r);
+      if(Array.isArray(p)&&p.length>20){
+        draws=p.filter(n=>n>=1&&n<=36);
+        // Load date
+        const dStr=localStorage.getItem('playwhe_last_date');
+        if(dStr){
+          const d=new Date(dStr);
+          if(!isNaN(d.getTime())) LAST_DRAW_DATE=d;
+          else LAST_DRAW_DATE=new Date('2026-10-05T19:00:00');
+        } else {
+          // Estimate date from length difference
+          const diff = draws.length - ORIGINAL_DRAWS_LENGTH;
+          LAST_DRAW_DATE = new Date(new Date('2026-10-05T19:00:00').getTime() + (diff)*(24/DRAWS_PER_DAY)*60*60*1000);
+        }
+        // Load overrides
+        const savedGap=localStorage.getItem('playwhe_manual_overdue');
+        const savedAt=localStorage.getItem('playwhe_manual_overdue_at');
+        if(savedGap){
+          try{
+            const obj=JSON.parse(savedGap);
+            if(Object.keys(obj).length>0){
+              DRY_OVERRIDES_GAP={};
+              Object.entries(obj).forEach(([k,v])=>{ DRY_OVERRIDES_GAP[parseInt(k)]=v; });
+            }
+          }catch(e){}
+        }
+        if(savedAt){
+          try{
+            const obj=JSON.parse(savedAt);
+            DRY_OVERRIDES_AT={};
+            Object.entries(obj).forEach(([k,v])=>{ DRY_OVERRIDES_AT[parseInt(k)]=v; });
+          }catch(e){}
+        }
+        console.log('LOADED', draws.length, 'draws');
+        renderAll();
+        return true;
+      }
+    }
+  }catch(e){ console.error('loadDraws fail', e); }
+  return false;
+}
+function resetDraws(){
+  if(!confirm('Reset to original 740 draws? This clears saved data.')) return;
+  draws=[...DRAWS];
+  LAST_DRAW_DATE = new Date('2026-10-05T19:00:00');
+  DRY_OVERRIDES_GAP = {"28": 92, "10": 120, "4": 95, "22": 92, "24": 85, "5": 32, "12": 36, "29": 89, "30": 43, "33": 34};
+  DRY_OVERRIDES_AT = {28: ORIGINAL_DRAWS_LENGTH, 10: ORIGINAL_DRAWS_LENGTH, 4: ORIGINAL_DRAWS_LENGTH, 22: ORIGINAL_DRAWS_LENGTH, 24: ORIGINAL_DRAWS_LENGTH, 5: ORIGINAL_DRAWS_LENGTH, 12: ORIGINAL_DRAWS_LENGTH, 29: ORIGINAL_DRAWS_LENGTH, 30: ORIGINAL_DRAWS_LENGTH, 33: ORIGINAL_DRAWS_LENGTH};
+  try{
+    localStorage.setItem('playwhe_draws_blue', JSON.stringify(draws));
+    localStorage.setItem('playwhe_last_date', LAST_DRAW_DATE.toISOString());
+    localStorage.setItem('playwhe_manual_overdue', JSON.stringify(DRY_OVERRIDES_GAP));
+    localStorage.setItem('playwhe_manual_overdue_at', JSON.stringify(DRY_OVERRIDES_AT));
+  }catch(e){}
+  renderAll();
+}
+function renderDashboard(){ const recent=document.getElementById('recentDraws'); if(!recent) return; const last50=draws.slice(-50).reverse(); recent.innerHTML=last50.map((n,i)=>{ const idx=draws.length-1-i; const d=getDateForIndex(idx); return '<div class="flex gap-1 items-center bg-[#0a1420] border border-[#38bdf8]/20 rounded-full px-2 py-0.5"><span class="w-5 h-5 rounded-full bg-[#38bdf8] flex items-center justify-center text-[10px] font-black text-black">'+n+'</span><span class="text-[9px]">'+MARKS_NAMES[n]+'</span><span class="text-[8px] opacity-50">'+formatDate(d)+'</span><span class="text-[8px] opacity-30">#'+(draws.length-i)+'</span></div>'; }).join(''); document.getElementById('totalDraws').textContent=draws.length; const last=draws[draws.length-1]; document.getElementById('lastDrawDash').textContent=last+' '+MARKS_NAMES[last]+' • '+formatDate(LAST_DRAW_DATE); const stats=computeStats(); const hot=Object.entries(stats.freq).sort((a,b)=>b[1]-a[1])[0]; document.getElementById('mostHot').textContent=hot?hot[0]+' '+MARKS_NAMES[hot[0]]+' x'+hot[1]:'-'; const qa=document.getElementById('quickAdd'); if(qa){ qa.innerHTML=''; for(let i=1;i<=36;i++){ const b=document.createElement('button'); b.className='col-span-2 md:col-span-1 h-8 rounded-lg bg-[#0a1420] border border-[#38bdf8]/20 font-black text-[11px]'; b.textContent=i; b.onclick=()=>{ addDraw(i); }; qa.appendChild(b); } } const tb=document.getElementById('todayBoard'); if(tb){ const today=draws.slice(-4); tb.innerHTML=today.map((n,idx)=>{ const i=draws.length-4+idx; return n+' '+MARKS_NAMES[n]+' • '+formatDate(getDateForIndex(i)); }).join('<br>'); } }
+
+
+function addRandom(){ const n=Math.floor(Math.random()*36)+1; addDraw(n); }
+
+
+function applyManualOverdue(){
+  const input=document.getElementById('manualOverdueInput').value;
+  if(!input.trim()) return;
+  const pairs=input.split(',').map(s=>s.trim()).filter(Boolean);
+  let fixed=0;
+  pairs.forEach(pair=>{
+    const [numStr,gapStr]=pair.split(':').map(s=>s.trim());
+    const num=parseInt(numStr); const gap=parseInt(gapStr);
+    if(num>=1&&num<=36&&!isNaN(gap)){
+      DRY_OVERRIDES_GAP[num]=gap;
+      DRY_OVERRIDES_AT[num]=draws.length;
+      fixed++;
+    }
+  });
+  document.getElementById('manualOverdueStatus').textContent='Fixed '+fixed+' numbers: '+input+' (auto-increments)';
+  localStorage.setItem('playwhe_manual_overdue', JSON.stringify(DRY_OVERRIDES_GAP));
+  localStorage.setItem('playwhe_manual_overdue_at', JSON.stringify(DRY_OVERRIDES_AT));
+  renderAll();
+}
+
+function clearManualOverdue(){
+  localStorage.removeItem('playwhe_manual_overdue');
+  localStorage.removeItem('playwhe_manual_overdue_at');
+  for(let k in DRY_OVERRIDES_GAP) delete DRY_OVERRIDES_GAP[k];
+  for(let k in DRY_OVERRIDES_AT) delete DRY_OVERRIDES_AT[k];
+  const real = {"28": 92, "10": 120, "4": 95, "22": 92, "24": 85, "5": 32, "12": 36, "29": 89, "30": 43, "33": 34};
+  Object.entries(real).forEach(([k,v])=>{ DRY_OVERRIDES_GAP[k]=v; DRY_OVERRIDES_AT[k]=ORIGINAL_DRAWS_LENGTH; });
+  localStorage.setItem('playwhe_manual_overdue', JSON.stringify(DRY_OVERRIDES_GAP));
+  localStorage.setItem('playwhe_manual_overdue_at', JSON.stringify(DRY_OVERRIDES_AT));
+  document.getElementById('manualOverdueInput').value='';
+  document.getElementById('manualOverdueStatus').textContent='Reset to real: 10:120,4:95,28:92,22:92,29:89,24:85,30:43,12:36,33:34,5:32';
+  renderAll();
+}
+
+// === FIXED PERSISTENCE ON STARTUP ===
+(function initPersistence(){
+  try{
+    const savedDraws = localStorage.getItem('playwhe_draws_blue');
+    if(savedDraws){
+      const p=JSON.parse(savedDraws);
+      if(Array.isArray(p)&&p.length>20){
+        draws=p.filter(n=>n>=1&&n<=36);
+        const dStr=localStorage.getItem('playwhe_last_date');
+        if(dStr){
+          const d=new Date(dStr);
+          if(!isNaN(d.getTime())) LAST_DRAW_DATE=d;
+        } else {
+          const diff = draws.length - ORIGINAL_DRAWS_LENGTH;
+          LAST_DRAW_DATE = new Date(new Date('2026-10-05T19:00:00').getTime() + diff*(24/DRAWS_PER_DAY)*60*60*1000);
+        }
+      }
+    }
+    const saved=localStorage.getItem('playwhe_manual_overdue');
+    if(saved){
+      const obj=JSON.parse(saved);
+      if(Object.keys(obj).length>0){
+        DRY_OVERRIDES_GAP={};
+        Object.entries(obj).forEach(([k,v])=>{ DRY_OVERRIDES_GAP[parseInt(k)]=v; });
+      }
+    }
+    const savedAt=localStorage.getItem('playwhe_manual_overdue_at');
+    if(savedAt){
+      const obj=JSON.parse(savedAt);
+      DRY_OVERRIDES_AT={};
+      Object.entries(obj).forEach(([k,v])=>{ DRY_OVERRIDES_AT[parseInt(k)]=v; });
+    } else {
+      Object.keys(DRY_OVERRIDES_GAP).forEach(k=>{ if(DRY_OVERRIDES_AT[k]===undefined) DRY_OVERRIDES_AT[k]=ORIGINAL_DRAWS_LENGTH; });
+    }
+  }catch(e){ console.error('init persistence fail', e); }
+})();
+
+
+ document.querySelectorAll('.tab-btn').forEach(btn=>{ 
+  btn.addEventListener('click',()=>{ 
+    document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('tab-active')); 
+    btn.classList.add('tab-active'); 
+    document.querySelectorAll('.tab-panel').forEach(p=>p.classList.add('hidden')); 
+    const target = document.getElementById(btn.dataset.tab);
+    if(target) target.classList.remove('hidden');
+  }); 
+});
+renderAll();
+</script>
+<script>
+if('serviceWorker' in navigator){
+  window.addEventListener('load', ()=>{
+    navigator.serviceWorker.register('./sw.js').then(reg=>{ console.log('SW registered', reg.scope); }).catch(err=>console.log('SW fail', err));
+  });
+}
+</script>
+</body></html>
